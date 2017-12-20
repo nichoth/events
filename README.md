@@ -1,14 +1,16 @@
 # events
 
-Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list.
-
-This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, except for the constructor.
+An event bus and helpers
 
 ## install
 
     $ npm install @nichoth/events
 
 ## bus
+
+Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list.
+
+This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, except for the constructor.
 
 ### example
 
