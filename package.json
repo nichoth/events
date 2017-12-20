@@ -1,6 +1,6 @@
 {
-  "name": "@nichoth/bus",
-  "description": "An event bus where you can pass in a static list of event names",
+  "name": "@nichoth/events",
+  "description": "An event bus and helpers",
   "version": "0.0.2",
   "main": "index.js",
   "directories": {
@@ -9,7 +9,7 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
-    "test": "node test/index.js"
+    "test": "tape test/*.js"
   },
   "dependencies": {
     "inherits": "^2.0.3",
