@@ -7,15 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "dependencies": {
-      "preversion": "npm test",
-      "postversion": "git push && git push --tags && npm publish",
-      "inherits": "^2.0.3",
-      "nanobus": "^4.3.1"
-    },
-    "devDependencies": {
-      "tape": "^4.8.0"
-    },
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags && npm publish",
     "test": "node test/index.js"
   },
   "dependencies": {
