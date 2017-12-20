@@ -1,4 +1,4 @@
-# bus
+# events
 
 Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list.
 
@@ -6,9 +6,11 @@ This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has th
 
 ## install
 
-    $ npm install @nichoth/bus
+    $ npm install @nichoth/events
 
-## example
+## bus
+
+### example
 
 ```js
 var test = require('tape')
