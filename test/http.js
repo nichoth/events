@@ -3,12 +3,18 @@ var Bus = require('../')
 var test = require('tape')
 
 test('http effects', function (t) {
-    t.plan(1)
+    t.plan(2)
     var bus = Bus()
     var fns = {
         foo: function (arg, cb) {
             process.nextTick(function () {
                 cb(null, 'world')
+            })
+        },
+
+        err: function (arg, cb) {
+            process.nextTick(function () {
+                cb('test')
             })
         }
     }
@@ -30,9 +36,25 @@ test('http effects', function (t) {
                 ['resolve', {
                     cid: 0, type: 'foo', res: 'world', req: 'hello' }]
             ], 'should emit the right events')
+            bus.removeAllListeners()
+            testErr()
         }
     })
 
     fx.foo('hello')
+
+    function testErr () {
+        var errResult = []
+        bus.on('*', function (ev, data) {
+            errResult.push([ev, data])
+            if (errResult.length === 2) {
+                t.deepEqual(errResult, [
+                    ['start', { cid: 1, type: 'err', req: {} }],
+                    ['error', { cid: 1, type: 'err', req: {}, error: 'test'}]
+                ], 'request with error response')
+            }
+        })
+        fx.err({})
+    }
 })
 
