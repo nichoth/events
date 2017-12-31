@@ -53,9 +53,6 @@ Recursively namespace an object of event names
 
 ### example
 
-Take an object of event name strings and return an object of namespaced
-strings.
-
 ```js
 var namespace = require('@nichoth/events/namespace')
 var test = require('tape')
