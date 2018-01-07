@@ -8,11 +8,12 @@ An event bus and helpers
 
 ## bus
 
-Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list. If you don't pass in any event names, then you can subscribe to anything.
-
-This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, except for the constructor.
+This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, except for the constructor, which takes a list of valid event names, and the `emit` method, which will return a curried function if you don't pass in a second argument.
 
 ### example
+
+#### event names
+Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list. If you don't pass in any event names, then you can subscribe to anything.
 
 ```js
 var test = require('tape')
@@ -44,6 +45,21 @@ test('dont throw if given no event names', function (t) {
         t.equal(data, 'bar')
     })
     bus.emit('foo', 'bar')
+})
+```
+
+#### emit method
+Return a curried function if you don't pass in a second argument.
+
+```js
+test('curry emit method', function (t) {
+    t.plan(1)
+    var bus = Bus()
+    bus.on('foo', function (data) {
+        t.equal(data, 'hello')
+    })
+    var emitFoo = bus.emit('foo')
+    emitFoo('hello')
 })
 ```
 

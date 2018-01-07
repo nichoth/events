@@ -29,3 +29,13 @@ test('dont throw if given no event names', function (t) {
     bus.emit('foo', 'bar')
 })
 
+test('curry emit method', function (t) {
+    t.plan(1)
+    var bus = Bus()
+    bus.on('foo', function (data) {
+        t.equal(data, 'hello')
+    })
+    var emitFoo = bus.emit('foo')
+    emitFoo('hello')
+})
+

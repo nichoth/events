@@ -22,5 +22,13 @@ Bus.prototype.on = function (name, fn) {
     return Nanobus.prototype.on.apply(this, arguments)
 }
 
+Bus.prototype.emit = function (name, data) {
+    var self = this
+    if (data === undefined) return function (_data) {
+        return self.emit(name, _data)
+    }
+    return Nanobus.prototype.emit.call(this, name, data)
+}
+
 module.exports = Bus
 
