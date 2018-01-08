@@ -30,12 +30,15 @@ test('dont throw if given no event names', function (t) {
 })
 
 test('curry emit method', function (t) {
-    t.plan(1)
-    var bus = Bus()
+    t.plan(2)
+    var bus = Bus(['foo'])
     bus.on('foo', function (data) {
         t.equal(data, 'hello')
     })
     var emitFoo = bus.emit('foo')
     emitFoo('hello')
+
+    function emitBar () { return bus.emit('bar') }
+    t.throws(emitBar, 'should throw when you curry an invalid event name')
 })
 

@@ -24,6 +24,9 @@ Bus.prototype.on = function (name, fn) {
 
 Bus.prototype.emit = function (name, data) {
     var self = this
+    if (this._evs && !this._evs[name]) {
+        throw new Error('Invalid event name ' + name)
+    }
     if (data === undefined) return function (_data) {
         return self.emit(name, _data)
     }
