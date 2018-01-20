@@ -26,22 +26,26 @@ test('http effects', function (t) {
     }
 
     var result = []
-    var fx = HttpEffects(evs, bus, fns)
+    var fooFx = HttpEffects(evs, bus, fns.foo)
 
     bus.on('*', function (ev, data) {
         result.push([ev, data])
-        if (result.length === 2) {
+        if (result.length === 4) {
             t.deepEqual(result, [
-                ['start', { cid: 0, type: 'foo', req: 'hello' }],
+                ['start', { cid: 0, req: 'hello' }],
+                ['start', { cid: 1, req: 'test' }],
                 ['resolve', {
-                    cid: 0, type: 'foo', res: 'world', req: 'hello' }]
+                    cid: 0, res: 'world', req: 'hello' }],
+                ['resolve', {
+                    cid: 1, res: 'world', req: 'test' }],
             ], 'should emit the right events')
             bus.removeAllListeners()
             testErr()
         }
     })
 
-    fx.foo('hello')
+    fooFx('hello')
+    fooFx('test')
 
     function testErr () {
         var errResult = []
@@ -49,12 +53,12 @@ test('http effects', function (t) {
             errResult.push([ev, data])
             if (errResult.length === 2) {
                 t.deepEqual(errResult, [
-                    ['start', { cid: 1, type: 'err', req: {} }],
-                    ['error', { cid: 1, type: 'err', req: {}, error: 'test'}]
+                    ['start', { cid: 2, req: {} }],
+                    ['error', { cid: 2, req: {}, error: 'test'}]
                 ], 'request with error response')
             }
         })
-        fx.err({})
+        HttpEffects(evs, bus, fns.err, {})
     }
 })
 
