@@ -141,6 +141,7 @@ Take an object of async functions and emit events on the given bus
 
 ### example
 ```js
+
 var HttpEffects = require('../http')
 var Bus = require('../')
 var test = require('tape')
@@ -169,7 +170,7 @@ test('http effects', function (t) {
     }
 
     var result = []
-    var fooFx = HttpEffects(evs, bus, fns.foo)
+    var fooFx = HttpEffects(evs, bus, fns.foo, {})
 
     bus.on('*', function (ev, data) {
         result.push([ev, data])
@@ -201,8 +202,7 @@ test('http effects', function (t) {
                 ], 'request with error response')
             }
         })
-        HttpEffects(evs, bus, fns.err, {})
+        HttpEffects(evs, bus, fns.err, {}, {})
     }
 })
 ```
-

@@ -11,24 +11,24 @@ var cid = 0
 // (evs.start, { cid, req: data })
 // (evs.resolve, { cid, req: data, res: response })
 // (evs.error, { cid, req: data, error })
-var HttpEffects = curry(function (evs, bus, fn, req) {
+var HttpEffects = curry(function (evs, bus, fn, map, req) {
     var _id = cid++
     var evData = {
         cid: _id,
         req: req
     }
-    bus.emit(evs.start, evData)
+    bus.emit(evs.start, xtend(evData, map))
 
     fn(req, function onResponse (err, res) {
-        if (err) return bus.emit(evs.error, xtend(evData, {
+        if (err) return bus.emit(evs.error, xtend(evData, map, {
             error: err
         }))
 
-        bus.emit(evs.resolve, {
+        bus.emit(evs.resolve, xtend({
             cid: _id,
             res: res,
             req: req
-        })
+        }, map))
     })
 })
 
