@@ -137,7 +137,7 @@ test('flatten', function (t) {
 
 ## http
 
-Take an object of async functions and emit events on the given bus
+Take an async function and return a new function that emits events on the given bus
 
 ### example
 ```js
@@ -170,6 +170,7 @@ test('http effects', function (t) {
     }
 
     var result = []
+    // the last argument is data that gets added to the event objects
     var fooFx = HttpEffects(evs, bus, fns.foo, {})
 
     bus.on('*', function (ev, data) {
