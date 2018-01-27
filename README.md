@@ -12,7 +12,7 @@ This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has th
 
 ### example
 
-#### event names
+#### event emitter
 Pass in a list of event names when you create a bus, then throw an error if you subscribe to an event that's not in the list. If you don't pass in any event names, then you can subscribe to anything.
 
 ```js
