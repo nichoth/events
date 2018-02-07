@@ -214,7 +214,7 @@ Subscribe to events and call methods with the right context
 
 ### example
 ```js
-var Sub = require('../subscription')
+var Sub = require('../subscribe')
 var assert = require('assert')
 var Store = require('@nichoth/state')
 var Bus = require('../')

@@ -1,4 +1,4 @@
-var Sub = require('../subscription')
+var Sub = require('../subscribe')
 var assert = require('assert')
 var Store = require('@nichoth/state')
 var Bus = require('../')
