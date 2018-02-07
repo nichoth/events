@@ -213,6 +213,8 @@ test('http effects', function (t) {
 Subscribe to events and call methods with the right context
 
 ### example
+
+#### constructor
 ```js
 var Sub = require('../subscribe')
 var assert = require('assert')
@@ -231,6 +233,11 @@ var DemoStore = Store.extend({
 
 var bus = Bus()
 var demoStore = DemoStore()
+```
+
+#### on(String eventName, String | method fn) => subscription
+
+```js
 var sub = Sub(demoStore, bus)
     .on('example', 'foo')
     .on('woo', demoStore.bar)
@@ -243,10 +250,30 @@ assert.equal(demoStore.state().hello, 'again',
 bus.emit('woo', 'moo')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should call fn')
+```
 
+#### applyTo(method, eventName
+
+#### close() => undefined
+Remove all event listeners
+```js
 sub.close()
 bus.emit('example', 'test')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
+```
+
+#### Subscription.withEvents (Object events) => Subscription
+Helper that returns a function that creates a subscription with the given events
+
+```js
+var WithEvs = Sub.withEvents({
+    foo: 'example',
+    bar: 'testEvent'
+})
+
+var _sub = WithEvs(demoStore, bus)
+bus.emit('example', 'new data')
+assert.equal(demoStore.state().hello, 'new data', 'should subscribe')
 ```
 

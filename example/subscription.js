@@ -33,4 +33,18 @@ bus.emit('example', 'test')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
 
+// convenient helper
+// keys are method names, values are event names
+// this is useful if the event names are references, not strings
+// for example { foo: something.something }
+var WithEvs = Sub.withEvents({
+    foo: 'example',
+    bar: 'testEvent'
+})
+
+var _sub = WithEvs(demoStore, bus)
+bus.emit('example', 'new data')
+console.log(demoStore.state().hello)
+assert.equal(demoStore.state().hello, 'new data', 'should subscribe')
+
 
