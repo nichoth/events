@@ -235,7 +235,7 @@ var bus = Bus()
 var demoStore = DemoStore()
 ```
 
-#### on(String eventName, String | method fn) => subscription
+#### .on(String eventName, String | method fn) => subscription
 
 ```js
 var sub = Sub(demoStore, bus)
@@ -252,9 +252,7 @@ console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should call fn')
 ```
 
-#### applyTo(method, eventName
-
-#### close() => undefined
+#### .close() => undefined
 Remove all event listeners
 ```js
 sub.close()
