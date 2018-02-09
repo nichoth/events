@@ -231,11 +231,15 @@ var DemoStore = Store.extend({
     }
 })
 
+// depend on an event emitter and context object
 var bus = Bus()
 var demoStore = DemoStore()
+var sub = Sub(demoStore, bus)
 ```
 
 #### .on(String eventName, String | method fn) => subscription
+
+Listen for events and call methods with the right context
 
 ```js
 var sub = Sub(demoStore, bus)
