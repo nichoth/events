@@ -4,12 +4,18 @@ var Store = require('@nichoth/state')
 var Bus = require('../')
 
 var DemoStore = Store.extend({
-    _state: { hello: 'world' },
+    _state: { hello: 'world', calls: { foo: 0, bar: 0, baz: 0 } },
     foo: function (data) {
+        this._state.calls.foo++
         this._state.hello = data
     },
     bar: function (data) {
+        this._state.calls.bar++
         this._state.hello = data
+    },
+    baz: function (data) {
+        this._state.calls.baz++
+        this._state.hello = 'baz' + data
     }
 })
 
@@ -28,8 +34,15 @@ bus.emit('woo', 'moo')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should call fn')
 
+// should replace the existing event handler
+sub.on('example', 'baz')
+bus.emit('example', 'hey')
+console.log('replace', demoStore.state())
+assert.equal(demoStore.state().calls.foo, 1)
+assert.equal(demoStore.state().calls.baz, 1)
+
 sub.close()
 bus.emit('example', 'test')
 console.log(demoStore.state().hello)
-assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
+assert.equal(demoStore.state().hello, 'bazhey', 'should unsubscribe')
 

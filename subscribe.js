@@ -2,7 +2,7 @@ function Subscription (store, bus) {
     if (!(this instanceof Subscription)) return new Subscription(store, bus)
     this._store = store
     this._bus = bus
-    this._listeners = []
+    this._listeners = {}
 }
 
 Subscription.prototype.on = function (ev, fn) {
@@ -14,14 +14,16 @@ Subscription.prototype.on = function (ev, fn) {
         self._store[fn](data)
     }
 
-    this._listeners.push([ev, listener])
+    var oldListener = this._listeners[ev]
+    if (oldListener) this._bus.removeListener(ev, oldListener)
+    this._listeners[ev] = listener
     return this
 }
 
 Subscription.prototype.close = function () {
     var self = this
-    this._listeners.forEach(function (l) {
-        self._bus.removeListener(l[0], l[1])
+    Object.keys(this._listeners).forEach(function (evName) {
+        self._bus.removeListener(evName, self._listeners[evName])
     })
 }
 
