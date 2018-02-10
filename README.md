@@ -222,12 +222,18 @@ var Store = require('@nichoth/state')
 var Bus = require('../')
 
 var DemoStore = Store.extend({
-    _state: { hello: 'world' },
+    _state: { hello: 'world', calls: { foo: 0, bar: 0, baz: 0 } },
     foo: function (data) {
+        this._state.calls.foo++
         this._state.hello = data
     },
     bar: function (data) {
+        this._state.calls.bar++
         this._state.hello = data
+    },
+    baz: function (data) {
+        this._state.calls.baz++
+        this._state.hello = 'baz' + data
     }
 })
 
@@ -238,7 +244,6 @@ var sub = Sub(demoStore, bus)
 ```
 
 #### .on(String eventName, String | method fn) => subscription
-
 Listen for events and call methods with the right context
 
 ```js
@@ -254,6 +259,14 @@ assert.equal(demoStore.state().hello, 'again',
 bus.emit('woo', 'moo')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should call fn')
+
+// you can only have 1 listener per event
+// new functions will replace the previous one
+sub.on('example', 'baz')
+bus.emit('example', 'hey')
+console.log('replace', demoStore.state())
+assert.equal(demoStore.state().calls.foo, 1)
+assert.equal(demoStore.state().calls.baz, 1)
 ```
 
 #### .close() => undefined
