@@ -25,16 +25,5 @@ Subscription.prototype.close = function () {
     })
 }
 
-// convenient event name curry
-Subscription.withEvents = function (evs) {
-    return function (store, bus) {
-        var sub = Subscription(store, bus)
-        Object.keys(evs).forEach(function (k) {
-            sub.on(evs[k], k)
-        })
-        return sub
-    }
-}
-
 module.exports = Subscription
 
