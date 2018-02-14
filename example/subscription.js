@@ -46,3 +46,30 @@ bus.emit('example', 'test')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'bazhey', 'should unsubscribe')
 
+// ## Sub.use
+// A helpful factory function
+var ExampleSub = Sub.use(function (sub) {
+    var { evs } = sub
+    sub.on(evs.foo, 'foo')
+        .on(evs.bar, 'bar')
+})
+
+// and properties on the third options arg are added to `this`
+var demoStore2 = DemoStore()
+var sub = ExampleSub(demoStore2, bus, {
+    evs: { foo: 'example.foo', bar: 'example.bar' }
+})
+
+bus.emit('example.foo', 'foo')
+assert.deepEqual(demoStore2.state(), {
+    hello: 'foo',
+    calls: { foo: 1, bar: 0, baz: 0 }
+})
+
+bus.emit('example.bar', 'bar')
+assert.deepEqual(demoStore2.state(), {
+    hello: 'bar',
+    calls: { foo: 1, bar: 1, baz: 0 }
+})
+
+

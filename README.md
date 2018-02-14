@@ -278,17 +278,16 @@ console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
 ```
 
-#### Subscription.withEvents (Object events) => Subscription
-Helper that returns a function that creates a subscription with the given events
+#### Subscription.use (function fn) => Subscription
+Helper that extends `Subscription` by calling the giving function during construction.
 
 ```js
-var WithEvs = Sub.withEvents({
-    foo: 'example',
-    bar: 'testEvent'
+var MySubscription = Subscription.use(function (sub) {
+    sub.on('foo', 'bar')
 })
 
-var _sub = WithEvs(demoStore, bus)
-bus.emit('example', 'new data')
+var sub = MySubscription(demoStore, bus)
+bus.emit('foo', 'new data')
 assert.equal(demoStore.state().hello, 'new data', 'should subscribe')
 ```
 

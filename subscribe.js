@@ -1,7 +1,11 @@
-function Subscription (store, bus) {
+var mxtend = require('xtend/mutable')
+var inherits = require('inherits')
+
+function Subscription (store, bus, opts) {
     if (!(this instanceof Subscription)) return new Subscription(store, bus)
     this._store = store
     this._bus = bus
+    mxtend(this, opts || {})
     this._listeners = {}
 }
 
@@ -25,6 +29,18 @@ Subscription.prototype.close = function () {
     Object.keys(this._listeners).forEach(function (evName) {
         self._bus.removeListener(evName, self._listeners[evName])
     })
+}
+
+Subscription.use = function (fn) {
+    function ExtendedSubscription (store, bus, opts) {
+        if (!(this instanceof ExtendedSubscription)) {
+            return new ExtendedSubscription(store, bus, opts)
+        }
+        Subscription.apply(this, arguments)
+        fn(this)
+    }
+    inherits(ExtendedSubscription, Subscription)
+    return ExtendedSubscription
 }
 
 module.exports = Subscription
