@@ -237,10 +237,11 @@ var DemoStore = Store.extend({
     }
 })
 
-// depend on an event emitter and context object
+// the constructor takes a context object, an event emitter, and
+// an optional third object with fields that will be added to `this`
 var bus = Bus()
 var demoStore = DemoStore()
-var sub = Sub(demoStore, bus)
+var sub = Sub(demoStore, bus, { events: { foo: 'foo' } })
 ```
 
 #### .on(String eventName, String | method fn) => subscription

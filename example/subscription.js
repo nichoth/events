@@ -54,7 +54,7 @@ var ExampleSub = Sub.use(function (sub) {
         .on(evs.bar, 'bar')
 })
 
-// and properties on the third options arg are added to `this`
+// any properties on the third options arg are added to `this`
 var demoStore2 = DemoStore()
 var sub = ExampleSub(demoStore2, bus, {
     evs: { foo: 'example.foo', bar: 'example.bar' }
