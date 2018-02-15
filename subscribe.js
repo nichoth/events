@@ -3,9 +3,9 @@ var inherits = require('inherits')
 
 function Subscription (store, bus, opts) {
     if (!(this instanceof Subscription)) return new Subscription(store, bus)
+    mxtend(this, opts || {})
     this._store = store
     this._bus = bus
-    mxtend(this, opts || {})
     this._listeners = {}
 }
 
