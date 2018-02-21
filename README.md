@@ -280,7 +280,7 @@ assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
 ```
 
 #### Subscription.use (function fn) => Subscription
-Helper that extends `Subscription` by calling the giving function during construction.
+Helper that extends `Subscription` by calling the given function during construction.
 
 ```js
 var MySubscription = Subscription.use(function (sub) {
