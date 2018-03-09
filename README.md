@@ -141,7 +141,6 @@ Take an async function and return a new function that emits events on the given 
 
 ### example
 ```js
-
 var HttpEffects = require('../http')
 var Bus = require('../')
 var test = require('tape')
@@ -279,16 +278,46 @@ console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'moo', 'should unsubscribe')
 ```
 
-#### Subscription.use (function fn) => Subscription
-Helper that extends `Subscription` by calling the given function during construction.
+#### Subscription.extend (function fn, object opts) => Subscription
+Helper that extends `Subscription` by calling `fn` during construction, and extending the prototype with `opts`
 
 ```js
-var MySubscription = Subscription.use(function (sub) {
-    sub.on('foo', 'bar')
-})
+var MySubscription = Subscription.extend(function () {
+    this.on('foo', 'bar')
+}, { map: ev => ev.value })
 
 var sub = MySubscription(demoStore, bus)
 bus.emit('foo', 'new data')
 assert.equal(demoStore.state().hello, 'new data', 'should subscribe')
 ```
+
+#### .map (data, eventName, methodName) => any
+`this.map` is called with the value of any event, and the return value
+is passed to the store method. It defaults to the identity function `a => a`
+
+```js
+// override the parent's map function
+var MapExample = ExampleSub.extend({
+    map: function (data, evName, method) {
+        assert.deepEqual(data, { value: 'foo' })
+        assert.equal(evName, 'example.foo')
+        assert.equal(method, 'foo')
+        return data.value
+    }
+})
+
+var mapExampleStore = DemoStore()
+var mapExample = MapExample(mapExampleStore, bus, {
+    evs: { foo: 'example.foo', bar: 'example.bar' }
+})
+
+bus.emit('example.foo', { value: 'foo' })
+assert.deepEqual(mapExampleStore.state(), {
+    hello: 'foo',
+    calls: { foo: 1, bar: 0, baz: 0 }
+})
+
+mapExample.close()
+```
+
 

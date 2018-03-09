@@ -1,25 +1,35 @@
 var mxtend = require('xtend/mutable')
 var inherits = require('inherits')
+function id (ev) {
+    return ev
+}
 
 function Subscription (store, bus, opts) {
-    if (!(this instanceof Subscription)) return new Subscription(store, bus)
+    if (!(this instanceof Subscription)) {
+        return new Subscription(store, bus, opts)
+    }
     mxtend(this, opts || {})
-    this._store = store
-    this._bus = bus
+    this.store = store
+    this.bus = bus
     this._listeners = {}
 }
 
+Subscription.prototype.map = id
+
 Subscription.prototype.on = function (ev, fn) {
     var self = this
-    this._bus.on(ev, listener)
+    this.bus.on(ev, listener)
 
     function listener (data) {
-        if (typeof fn === 'function') return fn.call(self._store, data)
-        self._store[fn](data)
+        if (typeof fn === 'function') {
+            return fn.call(self.store, self.map.call(self, data, ev, fn.name))
+        }
+        // `fn` is string
+        self.store[fn](self.map.call(self, data, ev, fn))
     }
 
     var oldListener = this._listeners[ev]
-    if (oldListener) this._bus.removeListener(ev, oldListener)
+    if (oldListener) this.bus.removeListener(ev, oldListener)
     this._listeners[ev] = listener
     return this
 }
@@ -27,19 +37,30 @@ Subscription.prototype.on = function (ev, fn) {
 Subscription.prototype.close = function () {
     var self = this
     Object.keys(this._listeners).forEach(function (evName) {
-        self._bus.removeListener(evName, self._listeners[evName])
+        self.bus.removeListener(evName, self._listeners[evName])
     })
 }
 
-Subscription.use = function (fn) {
+Subscription.extend = function (fn, _opts, _super) {
+    if (typeof fn === 'object') {
+        _opts = fn
+        fn = function noop () {}
+    }
+
     function ExtendedSubscription (store, bus, opts) {
         if (!(this instanceof ExtendedSubscription)) {
             return new ExtendedSubscription(store, bus, opts)
         }
-        Subscription.apply(this, arguments)
-        fn(this)
+        (_super || Subscription).apply(this, arguments)
+        fn.apply(this, arguments)
     }
-    inherits(ExtendedSubscription, Subscription)
+    inherits(ExtendedSubscription, _super || Subscription)
+
+    mxtend(ExtendedSubscription.prototype, _opts || {})
+
+    ExtendedSubscription.extend = function (fn, opts) {
+        return Subscription.extend(fn, opts, ExtendedSubscription)
+    }
     return ExtendedSubscription
 }
 

@@ -46,12 +46,17 @@ bus.emit('example', 'test')
 console.log(demoStore.state().hello)
 assert.equal(demoStore.state().hello, 'bazhey', 'should unsubscribe')
 
-// ## Sub.use
-// A helpful factory function
-var ExampleSub = Sub.use(function (sub) {
-    var { evs } = sub
-    sub.on(evs.foo, 'foo')
+// ## Sub.extend
+// A factory function
+var ExampleSub = Sub.extend(function () {
+    var { evs } = this
+    this.on(evs.foo, 'foo')
         .on(evs.bar, 'bar')
+}, {
+    // map every event object
+    map: function (ev) {
+        return ev.value
+    }
 })
 
 // any properties on the third options arg are added to `this`
@@ -60,16 +65,47 @@ var sub = ExampleSub(demoStore2, bus, {
     evs: { foo: 'example.foo', bar: 'example.bar' }
 })
 
-bus.emit('example.foo', 'foo')
+bus.emit('example.foo', { value: 'foo' })
 assert.deepEqual(demoStore2.state(), {
     hello: 'foo',
     calls: { foo: 1, bar: 0, baz: 0 }
 })
 
-bus.emit('example.bar', 'bar')
+bus.emit('example.bar', { value: 'bar' })
 assert.deepEqual(demoStore2.state(), {
     hello: 'bar',
     calls: { foo: 1, bar: 1, baz: 0 }
 })
+
+
+// ---------------------
+
+var MapExample = ExampleSub.extend({
+    map: function (data, evName, method) {
+        assert.equal(method, 'foo')
+        assert.equal(evName, 'example.foo')
+        assert.deepEqual(data, { value: 'foo' })
+        return data.value
+    }
+})
+
+var mapExampleStore = DemoStore()
+var mapExample = MapExample(mapExampleStore, bus, {
+    evs: { foo: 'example.foo', bar: 'example.bar' }
+})
+
+bus.emit('example.foo', { value: 'foo' })
+assert.deepEqual(mapExampleStore.state(), {
+    hello: 'foo',
+    calls: { foo: 1, bar: 0, baz: 0 }
+})
+
+mapExample.close()
+
+
+
+
+
+
 
 
