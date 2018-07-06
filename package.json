@@ -1,7 +1,7 @@
 {
   "name": "@nichoth/events",
   "description": "An event bus and helpers",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "main": "index.js",
   "directories": {
     "test": "test"
