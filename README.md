@@ -8,7 +8,13 @@ An event bus and helpers
 
 ## bus
 
-This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, except for the constructor, which takes a list of valid event names, and the `emit` method, which will return a curried function if you don't pass in a second argument.
+This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, plus some additional stuff.
+
+The constructor takes a list of valid event names and will throw if you pass in a bad event name.
+
+The `emit` method will return a curried function if you don't pass in a second argument.
+
+And you can pass in `{ memo: true }`, which will memoize any curried emit functions instead of creating a new function each time.
 
 ### example
 
@@ -19,7 +25,9 @@ Pass in a list of event names when you create a bus, then throw an error if you 
 var test = require('tape')
 var Bus = require('../')
 
-var bus = Bus(['hello'])
+var bus = Bus({
+    eventNames: ['hello']
+})
 
 test('bad event name', function (t) {
     t.plan(1)
@@ -46,10 +54,11 @@ test('dont throw if given no event names', function (t) {
     })
     bus.emit('foo', 'bar')
 })
+
 ```
 
 #### emit method
-Return a curried function if you don't pass in a second argument.
+Return a curried function if you don't pass in a second argument, and optionally cache the emit functions if `opts.memo === true`.
 
 ```js
 test('curry emit method', function (t) {
@@ -60,6 +69,20 @@ test('curry emit method', function (t) {
     })
     var emitFoo = bus.emit('foo')
     emitFoo('hello')
+})
+
+test('memoize the emitters', function (t) {
+    t.plan(2)
+    var bus = Bus({
+        memo: true
+    })
+
+    var emitBar = bus.emit('bar')
+    var emitBar2 = bus.emit('bar')
+    var emitBar3 = bus.emit('bar')
+
+    t.equal(emitBar, emitBar2, 'should return the same reference')
+    t.equal(emitBar, emitBar3, 'should return the same reference')
 })
 ```
 

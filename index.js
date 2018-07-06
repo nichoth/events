@@ -2,8 +2,14 @@ var Nanobus = require('nanobus')
 var inherits = require('inherits')
 
 // take an array of strings that are the allowed event names
-function Bus (evs) {
-    if (!(this instanceof Bus)) return new Bus(evs)
+function Bus (opts) {
+    if (!(this instanceof Bus)) return new Bus(opts)
+
+    opts = opts || {}
+    var evs = opts.eventNames
+    this._memo = opts.memo
+    if (opts.memo) this._memoFns = {}
+
     this._evs = evs ?
         evs.reduce(function (acc, ev) {
             acc[ev] = true
@@ -24,12 +30,26 @@ Bus.prototype.on = function (name, fn) {
 
 Bus.prototype.emit = function (name, data) {
     var self = this
-    if (this._evs && !this._evs[name]) {
+    if ((this._evs && !this._evs[name]) || name === undefined) {
         throw new Error('Invalid event name ' + name)
     }
-    if (data === undefined) return function (_data) {
-        return self.emit(name, _data)
+
+    // return curried function
+    if (data === undefined) {
+        if (this._memo) {
+            if (!this._memoFns[name]) {
+                this._memoFns[name] = function (_data) {
+                    return self.emit(name, _data)
+                }
+            }
+            return this._memoFns[name]
+        }
+
+        return function (_data) {
+            return self.emit(name, _data)
+        }
     }
+
     return Nanobus.prototype.emit.call(this, name, data)
 }
 
