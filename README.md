@@ -8,13 +8,11 @@ An event bus and helpers
 
 ## bus
 
-This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, plus some additional stuff.
+This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, plus some additional stuff:
 
-The constructor takes a list of valid event names and will throw if you pass in a bad event name.
-
-The `emit` method will return a curried function if you don't pass in a second argument.
-
-And you can pass in `{ memo: true }`, which will memoize any curried emit functions instead of creating a new function each time.
+* You can pass in list of valid event names, and will throw if you pass in a bad event name.
+* The `emit` method will return a curried function if you don't pass in a second argument.
+* You can pass in `{ memo: true }`, which will memoize any curried emit functions instead of creating a new function each time.
 
 ### example
 
