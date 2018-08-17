@@ -10,9 +10,9 @@ An event bus and helpers
 
 This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, plus some additional stuff:
 
-* You can pass in list of valid event names, and will throw if you pass in a bad event name.
-* The `emit` method will return a curried function if you don't pass in a second argument.
-* You can pass in `{ memo: true }`, which will memoize any curried emit functions instead of creating a new function each time.
+* You can pass in list of valid event names, and will throw if you emit or listen for a bad event name
+* The `emit` method will return a curried function if you don't pass a second argument
+* You can pass in `{ memo: true }`, which will memoize any curried emit functions instead of creating a new function each time
 
 ### example
 
