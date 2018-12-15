@@ -1,5 +1,4 @@
 # events
-
 An event bus and helpers
 
 ## install
@@ -7,7 +6,6 @@ An event bus and helpers
     $ npm install @nichoth/events
 
 ## bus
-
 This inherits from [nanobus](https://github.com/yoshuawuyts/nanobus), and has the same API, plus some additional stuff:
 
 * You can pass in list of valid event names, and will throw if you emit or listen for a bad event name
@@ -23,8 +21,10 @@ Pass in a list of event names when you create a bus, then throw an error if you 
 var test = require('tape')
 var Bus = require('../')
 
+// create a new instance
 var bus = Bus({
-    eventNames: ['hello']
+    eventNames: ['hello'],  // optional allowed event names
+    memo: false  // return memoized emit function, default false
 })
 
 test('bad event name', function (t) {

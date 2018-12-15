@@ -1,10 +1,12 @@
 var Nanobus = require('nanobus')
 var inherits = require('inherits')
 
-// take an array of strings that are the allowed event names
+// eventNames -- optional list of allowed event names
+// memo -- Boolean - return cached `emit` functions. We use this for
+//   rendering with a virtual dom, so we don't create new functions on
+//   each render. Default false
 function Bus (opts) {
     if (!(this instanceof Bus)) return new Bus(opts)
-
     opts = opts || {}
     var evs = opts.eventNames
     this._memo = opts.memo
