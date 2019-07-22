@@ -1,43 +1,35 @@
 var xtend = require('xtend')
 var curry = require('curry')
+var cid = 0
 
 // emit events when you make a http request
 
 // `evs` should be { start, resolve, error }
-// `fns` is an object of async functions of (data, cb)
+// `fn` is an async function
 
 // this emits 3 types of event
-// (evs.start, { cid, type: fnKey, req: data })
-// (evs.resolve, { cid, type: fnKey, req: data, res: response })
-// (evs.error, { cid, type: fnKey, req: data, error })
-var HttpEffects = curry(function (evs, bus, fns) {
-    var cid = 0
+// (evs.start, { cid, req: data })
+// (evs.resolve, { cid, req: data, res: response })
+// (evs.error, { cid, req: data, error })
+var HttpEffects = curry(function (evs, bus, fn, map, req) {
+    var _id = cid++
+    var evData = {
+        cid: _id,
+        req: req
+    }
+    bus.emit(evs.start, xtend(evData, map))
 
-    return Object.keys(fns).reduce(function (acc, k) {
-        acc[k] = function (data) {
-            var _id = cid++
-            var evData = {
-                cid: _id,
-                type: k,
-                req: data
-            }
-            bus.emit(evs.start, evData)
+    fn(req, function onResponse (err, res) {
+        if (err) return bus.emit(evs.error, xtend(evData, map, {
+            error: err
+        }))
 
-            fns[k](data, function onResponse (err, res) {
-                if (err) return bus.emit(evs.error, xtend(evData, {
-                    error: err
-                }))
-
-                bus.emit(evs.resolve, {
-                    cid: _id,
-                    type: k,
-                    res: res,
-                    req: data
-                })
-            })
-        }
-        return acc
-    }, {})
+        bus.emit(evs.resolve, xtend({
+            cid: _id,
+            res: res,
+            req: req
+        }, map))
+    })
 })
 
 module.exports = HttpEffects
