@@ -52,3 +52,20 @@ test('flatten', function (t) {
     ])
 })
 
+test('types of nesting', function (t) {
+    t.plan(1)
+    t.deepEqual(namespace({
+        foo: ['bar'],
+        foo2: {
+            bar: ['baz']
+        }
+    }), {
+        foo: { bar: 'foo.bar' },
+        foo2: {
+            bar: {
+                baz: 'foo2.bar.baz'
+            }
+        }
+    })
+})
+
