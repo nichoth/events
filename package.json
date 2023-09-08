@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@nichoth/state": "0.0.10",
+    "esbuild": "^0.19.2",
     "eslint": "^4.18.2",
     "eslint-config-minlint": "^2.0.0",
     "tape": "^4.8.0"
