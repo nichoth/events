@@ -8,9 +8,15 @@ export class Bus {
     _listeners
     events  // <-- { update: 'something.foo.update' }
 
+    /**
+     * @constructor
+     * @param {string} name Name for this. This is not used currently.
+     * @param {string[]} [allowedEvents] Array of event names that may
+     * be emitted
+     */
     constructor (name, allowedEvents) {
-        if (!name) {
-            name = allowedEvents
+        if (!allowedEvents) {
+            allowedEvents = null
         }
         this._name = name
         this._listeners = {}
@@ -31,6 +37,11 @@ export class Bus {
      * Return a function that will emit events on this bus
      *   - has emit functions indexed by event name
      *   - `events` -- an object of valid event names
+     * @param {string[]} evs A list of event names that may be emitted
+     * @param {string} prefix A string with which to namespace this event emitter
+     * @returns A function that will emit events on the parent bus when called.
+     * Also it includes emit functions that are indexed as properties of
+     * event names on the function.
      */
     emitter (evs, prefix) {
         const evNames = Bus.createEvents(evs, prefix)
@@ -60,6 +71,12 @@ export class Bus {
         return newEmitter
     }
 
+    /**
+     * Subscribe to event names.
+     * @param {string} eventName Event name to listen for
+     * @param {(data) => void} listener Function to call on `eventName`
+     * @returns {()=>void} A function that will unsibscribe the given listener.
+     */
     on (eventName, listener) {
         let starIndex = null
         let index = null
@@ -86,6 +103,11 @@ export class Bus {
         return off
     }
 
+    /**
+     * Emit an event.
+     * @param {string} evName The event name to emit
+     * @param {any} data The data to pass to event listeners
+     */
     emit (evName, data) {
         const listeners = this._listeners[evName]
 

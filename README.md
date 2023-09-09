@@ -1,6 +1,10 @@
 # events
 An event bus and helpers
 
+__featuring__
+* 0 production dependencies
+* CJS and ESM versions
+
 ## API
 
 ## install

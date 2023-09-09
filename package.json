@@ -1,11 +1,12 @@
 {
+  "name": "@nichoth/events",
   "type": "module",
   "scripts": {
     "lint": "standardx -v",
     "build": "npm run build-cjs && npm run build-js",
     "build-cjs": "esbuild src/index.js --bundle --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build-js": "esbuild src/*.js --format=esm --keep-names --outdir=./dist",
-    "preversion": "check-deps . 1 && npm run lint",
+    "preversion": "check-deps . 0 && npm run lint",
     "postversion": "git push && git push --tags && npm publish",
     "prepublishOnly": "npm run build",
     "test": "node ./test/test.js | tap-arc"
@@ -19,6 +20,8 @@
       "import": "./dist/*.js",
       "require": "./dist/*.cjs"
     }
+  },
+  "dependencies": {
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.19.1",
@@ -35,5 +38,24 @@
     ]
   },
   "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
-  "license": "AGPL-3.0-or-later"
+  "license": "MIT",
+  "description": "An event bus and helpers",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nichoth/events.git"
+  },
+  "keywords": [
+    "events",
+    "event",
+    "emitter"
+  ],
+  "bugs": {
+    "url": "https://github.com/nichoth/events/issues"
+  },
+  "homepage": "https://github.com/nichoth/events#readme"
 }

@@ -5,7 +5,7 @@ import { Bus } from '../src/index.js'
 
 let bus
 test('create a bus', t => {
-    bus = new Bus()
+    bus = new Bus('tester')
     t.ok(bus, 'create an event bus')
     t.equal(typeof bus.on, 'function', 'should have .on')
     t.equal(typeof bus.emit, 'function', 'should have .emit')
