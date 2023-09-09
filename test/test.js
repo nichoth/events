@@ -53,7 +53,7 @@ test('subscribe to bus', t => {
 
 test('Use indexed `emit` functions', t => {
     bus.on(emit2.events.ok, (data) => {
-        t.equal(data, 'test data 2', 'should hear the event from indexed function')
+        t.equal(data, 'test data 2', 'should get the event from indexed function')
         t.end()
     })
 
