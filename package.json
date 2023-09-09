@@ -2,9 +2,9 @@
   "type": "module",
   "scripts": {
     "lint": "standardx -v",
-    "build": "npm run build-js && npm run build-js",
+    "build": "npm run build-cjs && npm run build-js",
     "build-cjs": "esbuild src/index.js --bundle --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
-    "build-js": "esbuild src/*.js --bundle --format=esm --keep-names --outdir=./dist",
+    "build-js": "esbuild src/*.js --format=esm --keep-names --outdir=./dist",
     "preversion": "check-deps . 1 && npm run lint",
     "postversion": "git push && git push --tags && npm publish",
     "prepublishOnly": "npm run build",
@@ -25,10 +25,10 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.19.1",
     "@nichoth/check-max-deps": "0.0.2",
-    "esbuild": "^0.15.11",
+    "@socketsupply/tapzero": "^0.7.1",
+    "esbuild": "^0.19.2",
     "standardx": "^7.0.0",
-    "tap-arc": "^0.3.5",
-    "tapzero": "^0.6.1"
+    "tap-arc": "^0.3.5"
   },
   "standardx": {
     "ignore": [
