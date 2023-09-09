@@ -1,6 +1,10 @@
 {
   "name": "@nichoth/events",
+  "version": "0.0.0",
+  "description": "An event bus and helpers",
+  "main": "dist/index.js",
   "type": "module",
+  "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
   "scripts": {
     "lint": "standardx -v",
     "build": "npm run build-cjs && npm run build-js",
@@ -26,7 +30,6 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.19.1",
     "@nichoth/check-max-deps": "0.0.2",
-    "@socketsupply/tapzero": "^0.7.1",
     "esbuild": "^0.19.2",
     "standardx": "^7.0.0",
     "tap-arc": "^0.3.5",
@@ -37,11 +40,7 @@
       "dist/*"
     ]
   },
-  "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
   "license": "MIT",
-  "description": "An event bus and helpers",
-  "version": "0.0.0",
-  "main": "dist/index.js",
   "directories": {
     "test": "test"
   },
