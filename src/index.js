@@ -1,38 +1,5 @@
 // @ts-check
-
-// type Listener = (data:any) => any
-
-// export type Emitter<Evs extends ReadonlyArray<string>> = {
-//     [Key in Evs[number]]:((data:any)=>void)
-// } & ((name:string, data:any)=>void) & { events: Record<string, string> };
-
-// export type Emitter<Evs extends ReadonlyArray<string>> = Record<
-//     (Evs[number]),
-//     ((data:any) => void)
-// > & { events: Record<string, string> & ((name:string, data:any)=>void)}
-
-// export type Emitter<Evs extends ReadonlyArray<string>> = (
-//     ((name:string, data:any)=>void) &
-//     Record<(Evs[number]), ((data:any) => void)> &
-//     {
-//         events: Record<string, string>;
-//         createChild:(childEvs:string[], prefix)=>Emitter<typeof childEvs>;
-//         _prefix:string;
-//     }
-// )
-
-// export interface EmitFn<Evs extends ReadonlyArray<string>> {
-//     (name:string, data:any):void;
-//     // events:Record<keyof Evs, string>;
-//     // events:{ [evName:string]:string }|null  // <-- { update: 'something.foo.update' }
-//     events:{ [K in keyof Evs]:string }|null  // <-- { update: 'something.foo.update' }
-//     _prefix:string;
-//     createChild:(evs:string[], prefix:string) => EmitFn<typeof evs>
-// }
-
-// type Emitter<Evs extends ReadonlyArray<string>> = EmitFn<Evs> & {
-//     [K in keyof Evs]:(data:any) => void
-// }
+import removeItems from './remove-array-items.js'
 
 export class Bus {
     _name
@@ -94,15 +61,29 @@ export class Bus {
     }
 
     on (eventName, listener) {
+        let starIndex = null
+        let index = null
+        const self = this
+
         if (eventName === '*') {
-            this._starListeners.push(listener)
+            starIndex = (self._starListeners.push(listener) - 1)
         } else {
-            if (!this._listeners[eventName]) {
-                this._listeners[eventName] = []
+            if (!self._listeners[eventName]) {
+                self._listeners[eventName] = []
             }
-            this._listeners[eventName].push(listener)
+            index = (self._listeners[eventName].push(listener) - 1)
         }
-        return this
+
+        function off () {
+            if (eventName === '*') {
+                removeItems(self._starListeners, starIndex, 1)
+                return self
+            } else {
+                removeItems(self._listeners[eventName], index, 1)
+            }
+        }
+
+        return off
     }
 
     emit (evName, data) {
