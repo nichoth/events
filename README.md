@@ -70,3 +70,4 @@ test('Use indexed `emit` functions', t => {
     emit2.ok('test data 2')
 })
 ```
+ 
