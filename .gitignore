@@ -4,3 +4,4 @@ bundle.js
 dist
 public
 package-lock.json
+.env
