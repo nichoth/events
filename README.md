@@ -29,9 +29,10 @@ bus.on('foo', function (data) {
 })
 ```
 
-### create a new child event emitter function
+### bus.emitter (evs, namespace)
 This will return a function that can emit events within the given namespace.
-*Namespace* here means prefixing event names with a given string.
+*Namespace* here means prefixing event names with a given string; they are all
+emitted on a single bus.
 
 Note the new function cannot subscribe to events, only emit them.
 
@@ -41,10 +42,17 @@ test('child event emitter', t => {
     // pass in a namespace -- 'testEmitter'
     const emitter = bus.emitter(['foo', 'bar'], 'testEmitter')
 
+    t.equal(typeof emitter, 'function', 'should return a function')
+
+    // event names are indexed at `.events`
     t.deepEqual(emitter.events, {
         foo: 'testEmitter.foo',
         bar: 'testEmitter.bar'
     }, 'has the expected events object')
+
+    // calling this function will emit an event like `'testEmitter.foo'`
+    t.equal(typeof emit.foo, 'function',
+        'should return curried functions, indexed by event name')
 })
 ```
 
