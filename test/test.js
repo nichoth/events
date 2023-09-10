@@ -22,8 +22,6 @@ test('create child event emitters', t => {
         bar: 'testEmitter.bar'
     }, 'has the expected events object')
 
-    // how to rm the error on `foo`?
-    // this could be caught at compile time
     t.equal(typeof emit.foo, 'function',
         'should return curried functions, indexed by event name')
     t.end()
@@ -41,10 +39,15 @@ test('create another child', t => {
 })
 
 test('subscribe to bus', t => {
+    t.plan(2)
     const off = bus.on(emit2.events.ok, (data) => {
         t.equal(data, 'test data', 'should hear the event')
-        t.end()
         off()
+    })
+
+    const unlisten = bus.on('testEmitter.child-two.ok', (data) => {
+        t.equal(data, 'test data', 'can subscribe via string')
+        unlisten()
     })
 
     const evs = emit2.events
@@ -52,9 +55,9 @@ test('subscribe to bus', t => {
 })
 
 test('Use indexed `emit` functions', t => {
+    t.plan(1)
     bus.on(emit2.events.ok, (data) => {
         t.equal(data, 'test data 2', 'should get the event from indexed function')
-        t.end()
     })
 
     emit2.ok('test data 2')

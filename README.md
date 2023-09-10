@@ -5,11 +5,47 @@ __featuring__
 * 0 production dependencies
 * CJS and ESM versions
 
-## API
-
 ## install
 ```bash
 npm i -S @nichoth/events
+```
+
+## API
+### Create a bus
+```js
+import { Bus } from '@nichoth/events'
+const bus = new Bus()
+```
+
+### emit events
+```js
+bus.emit('foo', 'my test data')
+```
+
+### subscribe to events
+```js
+bus.on('foo', function (data) {
+    console.log('got a foo event', data)
+})
+```
+
+### create a new child event emitter function
+This will return a function that can emit events within the given namespace.
+*Namespace* here means prefixing event names with a given string.
+
+Note the new function cannot subscribe to events, only emit them.
+
+```js
+test('child event emitter', t => {
+    // pass in valid event names -- ['foo', 'bar']
+    // pass in a namespace -- 'testEmitter'
+    const emitter = bus.emitter(['foo', 'bar'], 'testEmitter')
+
+    t.deepEqual(emitter.events, {
+        foo: 'testEmitter.foo',
+        bar: 'testEmitter.bar'
+    }, 'has the expected events object')
+})
 ```
 
 ## example
@@ -25,16 +61,15 @@ test('create a bus', t => {
 ```
 
 ### Create namespaced event emitters
-Create a new child emit function. This will namespace the event names. Here
-we pass in an array of names -- ['ok', 'example'] -- and a new
-prefix string -- 'child-two'.
+Create a new child emit function, with namespaced event names. Pass in an
+array of names -- ['ok', 'example'] -- and a new prefix string -- 'child-two'.
 
-Events are all emitted on the same bus, but the event names are namespaced
-by the 'child' event emitter.
+Events are emitted on the parent bus, but the events are namespaced --
+the given `prefix` is prepended to the event name.
 
 Events are exposed at `child.events`, indexed by their short name, `ok` and
-`example`. Each index maps to the fully namespaced name. So here
-`ok` maps to `'testEmitter.child-two.ok'`
+`example` in the following example. Each index maps to the fully namespaced
+name. So here `ok` maps to `'testEmitter.child-two.ok'`
 
 ```js
 // create a function that can emit events, but cannot subscribe

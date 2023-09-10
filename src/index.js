@@ -1,5 +1,5 @@
 // @ts-check
-import removeItems from './remove-array-items.js'
+// import removeItems from './remove-array-items.js'
 
 export class Bus {
     _name
@@ -78,25 +78,33 @@ export class Bus {
      * @returns {()=>void} A function that will unsibscribe the given listener.
      */
     on (eventName, listener) {
-        let starIndex = null
-        let index = null
         const self = this
 
         if (eventName === '*') {
-            starIndex = (self._starListeners.push(listener) - 1)
+            self._starListeners.push(listener)
         } else {
             if (!self._listeners[eventName]) {
                 self._listeners[eventName] = []
             }
-            index = (self._listeners[eventName].push(listener) - 1)
+            self._listeners[eventName].push(listener)
         }
 
         function off () {
             if (eventName === '*') {
-                removeItems(self._starListeners, starIndex, 1)
-                return self
+                setImmediate(() => {
+                    const i = self._starListeners.findIndex(fn => {
+                        return fn === listener
+                    })
+                    self._starListeners.splice(i, 1)
+                })
             } else {
-                removeItems(self._listeners[eventName], index, 1)
+                setImmediate(() => {
+                    const listeners = self._listeners[eventName]
+                    const i = listeners.findIndex(fn => {
+                        return fn === listener
+                    })
+                    self._listeners[eventName].splice(i, 1)
+                })
             }
         }
 
@@ -110,13 +118,14 @@ export class Bus {
      */
     emit (evName, data) {
         const listeners = this._listeners[evName]
+        const self = this
 
         if (listeners && listeners.length > 0) {
-            this._emit(this._listeners[evName], evName, data, false)
+            self._emit(listeners, evName, data, false)
         }
 
         if (this._starListeners.length > 0) {
-            this._emit(this._starListeners, evName, data, true)
+            self._emit(this._starListeners, evName, data, true)
         }
     }
 
@@ -131,10 +140,8 @@ export class Bus {
             return
         }
 
-        const length = arr.length
-        for (let i = 0; i < length; i++) {
-            const listener = arr[i]
-            listener(data)
-        }
+        arr.forEach(listener => {
+            listener.call(listener, data)
+        })
     }
 }
