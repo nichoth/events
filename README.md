@@ -42,6 +42,10 @@ bus.on('foo', function (data) {
 ```
 
 ### bus.emitter (events, namespace)
+```js
+const emitter = bus.emitter(['foo', 'bar'], 'testEmitter')
+```
+
 This will return a function that can emit events within the given namespace.
 *Namespace* here means prefixing event names with a given string; they are all
 emitted on a single bus.
