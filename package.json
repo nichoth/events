@@ -7,6 +7,7 @@
   "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
   "scripts": {
     "lint": "standardx -v",
+    "start": "vite",
     "build": "npm run build-cjs && npm run build-js",
     "build-cjs": "esbuild src/index.js --bundle --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build-js": "esbuild src/*.js --format=esm --keep-names --outdir=./dist",
@@ -25,15 +26,21 @@
       "require": "./dist/*.cjs"
     }
   },
-  "dependencies": {
-  },
   "devDependencies": {
     "@babel/eslint-parser": "7.19.1",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@nichoth/check-max-deps": "0.0.2",
+    "@preact/preset-vite": "^2.5.0",
+    "@preact/signals": "^1.2.1",
+    "@typescript-eslint/parser": "^6.6.0",
     "esbuild": "^0.19.2",
+    "postcss-nesting": "^12.0.1",
+    "preact": "^10.17.1",
     "standardx": "^7.0.0",
     "tap-arc": "^0.3.5",
-    "tape": "^5.6.6"
+    "tape": "^5.6.6",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.3"
   },
   "standardx": {
     "ignore": [

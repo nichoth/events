@@ -29,12 +29,15 @@ bus.on('foo', function (data) {
 })
 ```
 
-### bus.emitter (evs, namespace)
+### bus.emitter (events, namespace)
 This will return a function that can emit events within the given namespace.
 *Namespace* here means prefixing event names with a given string; they are all
 emitted on a single bus.
 
 Note the new function cannot subscribe to events, only emit them.
+
+### emitter.createChild (events, prefix)
+Create a new `emit` function, with another prefix.
 
 ```js
 test('child event emitter', t => {

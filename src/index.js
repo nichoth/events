@@ -44,7 +44,8 @@ export class Bus {
      * event names on the function.
      */
     emitter (evs, prefix) {
-        const evNames = Bus.createEvents(evs, prefix)
+        const evNames/** @type {Record<string, string>} */ =
+            Bus.createEvents(evs, prefix)
         const self = this
 
         function emitFn (evName, data) {
@@ -72,7 +73,7 @@ export class Bus {
     }
 
     /**
-     * Subscribe to event names.
+     * Subscribe to events.
      * @param {string} eventName Event name to listen for
      * @param {(data) => void} listener Function to call on `eventName`
      * @returns {()=>void} A function that will unsibscribe the given listener.
@@ -83,9 +84,7 @@ export class Bus {
         if (eventName === '*') {
             self._starListeners.push(listener)
         } else {
-            if (!self._listeners[eventName]) {
-                self._listeners[eventName] = []
-            }
+            if (!self._listeners[eventName]) self._listeners[eventName] = []
             self._listeners[eventName].push(listener)
         }
 

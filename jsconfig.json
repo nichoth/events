@@ -6,7 +6,10 @@
     "module": "esnext",
     "strict": false,
     "moduleResolution": "node16",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
   },
   "exclude": ["node_modules"]
 }
