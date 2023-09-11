@@ -6,7 +6,7 @@ export class Bus {
     _prefix
     _starListeners
     _listeners
-    events  // <-- { update: 'something.foo.update' }
+    events  // <-- an object like { update: 'something.foo.update' }
 
     /**
      * @constructor
@@ -25,6 +25,14 @@ export class Bus {
         this.events = (allowedEvents ? Bus.createEvents(allowedEvents, '') : null)
     }
 
+    /**
+     * Create a map of short event names to their full name.
+     * @param {string[]} evs An array of event names
+     * @param {string} prefix A string to prefix the given events with
+     * @returns {Record<string, string>} An object of full event names indexed
+     * by their short name
+     * @example Bus.createEvents(['foo', 'bar'], 'my-prefix')
+     */
     static createEvents (evs, prefix) {
         return evs.reduce((acc, ev) => {
             acc[ev] = (prefix ? (prefix + '.' + ev) : ev)

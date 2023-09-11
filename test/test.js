@@ -13,6 +13,17 @@ test('create a bus', t => {
     t.end()
 })
 
+test('create event names', t => {
+    const evs = Bus.createEvents(['foo', 'bar'], 'myPrefix')
+
+    t.deepEqual(evs, {
+        foo: 'myPrefix.foo',
+        bar: 'myPrefix.bar'
+    }, 'should create the right events')
+
+    t.end()
+})
+
 let emitter
 test('create child event emitters', t => {
     const emit = emitter = bus.emitter(['foo', 'bar'], 'testEmitter')

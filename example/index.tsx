@@ -12,6 +12,9 @@ let childRenders = 0
 /**
  * Child knows nothings about its event namespace. It only knows its local
  * event names.
+ *
+ * It does expect state of a certain shape, because it reads the state. We
+ * don't set the state here, we only emit events.
  */
 function Child ({ emit, state }):FunctionComponent {
     childRenders++
@@ -38,7 +41,7 @@ function Example ():FunctionComponent {
     const state = useSignal({ hello: 'hello' })
 
     // handle subscriptions in `useMemo`, because we only want
-    // this function to run once. This creates the state tree
+    // this function to run once. This creates the state tree.
     //
     // parent needs to know the event names that child components will emit
     const emitter = useMemo(() => {
