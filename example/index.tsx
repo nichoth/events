@@ -1,7 +1,7 @@
 import { FunctionComponent, render } from 'preact'
 import { useMemo } from 'preact/hooks'
-import { Bus } from '../src/index.js'
 import { useSignal } from '@preact/signals'
+import { Bus } from '../src/index.js'
 
 // bus is created *outside* the render loop
 const bus = new Bus('example')
@@ -84,6 +84,7 @@ function Example ():FunctionComponent {
         </p>
 
         <p>parentRenders: {parentRenders}</p>
+
         <Child emit={emitter} state={state} />
     </div>)
 }

@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 import postcssNesting from 'postcss-nesting'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-// import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,10 +19,7 @@ export default defineConfig({
         }),
         NodeGlobalsPolyfillPlugin({
             buffer: true
-        }),
-        // dts({
-        //     tsConfigFilePath: './tsconfig.json',
-        // }),
+        })
     ],
     // https://github.com/vitejs/vite/issues/8644#issuecomment-1159308803
     esbuild: {

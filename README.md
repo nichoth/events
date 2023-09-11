@@ -11,6 +11,7 @@ npm i -S @nichoth/events
 ```
 
 ## API
+
 ### Create a bus
 ```js
 import { Bus } from '@nichoth/events'
@@ -60,15 +61,82 @@ test('child event emitter', t => {
 ```
 
 ## example
+See [./example](./example/index.tsx) -- use in frontend JS.
+
+Notice the state & logic are controlled by the parent component, but
+changing the state does not cause the parent to re-render, only
+the child.
+
+This is different than calling `useState` in the parent
+component, which would cause a full re-render of every component.
+
+Because of the `signal` model, the state is never updated -- it is
+always a tree of objects. The object values are the only part of
+state that changes, thus only the child re-renders since that is
+the only place we read the value of the signal.
+
+This model of Signals + a single state store allows us to keep a top-down
+flow of application state -- state travels downward, events up.
+
+That is important because if you simply update state from anywhere in the view
+tree (which is possible, we are simply setting a value), then you lose the
+uni-directional flow of state + events, which is the sole benefit of something
+like React. Otherwise we are back to two-directional data, or mutable state,
+aka the thing that made client-side programming difficult in the past.
+
+
 ```js
-import { Bus } from '@nichoth/events'
+// src/example/index.tsx
 
-const bus = new Bus()
+let parentRenders = 0
+let childRenders = 0
 
-test('create a bus', t => {
-    t.equal(bus.events, null, 'by default has null as allowed event names')
-    t.end()
-})
+/**
+ * Child knows nothings about its event namespace. It only knows its local
+ * event names.
+ */
+function Child ({ emit, state }):FunctionComponent {
+    childRenders++
+
+    return (<div className="child">
+        <p>{state.value.hello}</p>
+        <p>Child renders: {childRenders}</p>
+        <p>
+            <button onClick={emit.hello} data-message="hey there">
+                say hello
+            </button>
+        </p>
+    </div>)
+}
+
+Child.events = ['hello', 'foo']
+
+function Example ():FunctionComponent {
+    parentRenders++
+
+    const state = useSignal({ hello: 'hello' })
+
+    // handle subscriptions in `useMemo`, because we only want
+    // this function to run once.
+    //
+    // parent needs to know the event names that child components will emit
+    const emitter = useMemo(() => {
+        const emit = bus.emitter(Child.events, 'childEmitter')
+
+        bus.on(emit.events.hello, ev => {
+            ev.preventDefault()
+            const msg = ev.target.dataset.message
+            state.value = { hello: msg }
+        })
+
+        return emit
+    }, [])
+
+    return (<div>
+        <p>parentRenders: {parentRenders}</p>
+        <Child emit={emitter} state={state} />
+    </div>)
+}
 ```
 
 ### Create namespaced event emitters
