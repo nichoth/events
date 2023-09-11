@@ -25,6 +25,18 @@ import { Bus } from '@nichoth/events'
 const bus = new Bus()
 ```
 
+### create event names
+```ts
+static createEvents(evs:string[], prefix:string)
+```
+
+This returns an object of namespaced events
+```js
+{
+    eventName: 'myPrefix.eventName'
+}
+```
+
 ### bus.emit
 Emit events
 
