@@ -54,38 +54,7 @@ function Example ():FunctionComponent {
     }, [])
 
     return (<div>
-        <p>
-            Notice the state & logic are controlled by the parent component, but
-            changing the state does not cause the parent to re-render, only
-            the child.
-        </p>
-
-        <p>
-            This is different than using <code>useState</code> in the parent
-            component, which would cause a full re-render of every component.
-        </p>
-
-        <p>
-            Because of the `signal` model, the state is never updated -- it is
-            always a tree of objects. The object values are the only part of
-            state that changes, thus only the child re-renders since that is
-            the only place we read the value of the signal.
-        </p>
-
-        <p>
-            This model of Signals + a single state store 
-            allows us to keep the top-down flow
-            of application state. That is important because if you simply
-            update state from
-            anywhere in the view tree (which is possible -- we are simply
-            setting a value), then you lose the uni-directional flow of state +
-            events. That is the sole benefit of something like React. Otherwise
-            we are back to two-directional data, aka the thing that made
-            client-side programming difficult in the past.
-        </p>
-
         <p>parentRenders: {parentRenders}</p>
-
         <Child emit={emitter} state={state} />
     </div>)
 }

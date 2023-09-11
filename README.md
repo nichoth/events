@@ -11,7 +11,7 @@ npm i -S @nichoth/events
 ```
 
 ## develop
-See an example of using this in a front-end app
+Start a localhost server with an example page
 
 ```bash
 npm start
@@ -25,12 +25,16 @@ import { Bus } from '@nichoth/events'
 const bus = new Bus()
 ```
 
-### emit events
+### bus.emit
+Emit events
+
 ```js
 bus.emit('foo', 'my test data')
 ```
 
-### subscribe to events
+### bus.on
+Subscribe to events
+
 ```js
 bus.on('foo', function (data) {
     console.log('got a foo event', data)

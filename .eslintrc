@@ -4,6 +4,11 @@
     "requireConfigFile": false
   },
   "rules": {
+    "react/jsx-wrap-multilines": ["error", { "declaration": "parens" }],
+    "react/jsx-handler-names": ["off"],
+    "react/jsx-closing-tag-location": ["off"],
+    "jsx-quotes": ["error", "prefer-double"],
+    "react/jsx-indent": ["error", 4],
     "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
     "no-multiple-empty-lines": [
       "error",
