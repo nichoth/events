@@ -27,6 +27,7 @@
       "require": "./dist/*.cjs"
     }
   },
+  "dependencies": {},
   "devDependencies": {
     "@babel/eslint-parser": "7.19.1",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
