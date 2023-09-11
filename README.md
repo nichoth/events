@@ -10,6 +10,13 @@ __featuring__
 npm i -S @nichoth/events
 ```
 
+## develop
+See an example of using this in a front-end app
+
+```bash
+npm start
+```
+
 ## API
 
 ### Create a bus
@@ -38,7 +45,7 @@ emitted on a single bus.
 Note the new function cannot subscribe to events, only emit them.
 
 ### emitter.createChild (events, prefix)
-Create a new `emit` function, with another prefix.
+Create a new `emit` function, with a new prefix.
 
 ```js
 test('child event emitter', t => {
@@ -81,8 +88,8 @@ flow of application state -- state travels downward, events up.
 That is important because if you simply update state from anywhere in the view
 tree (which is possible, we are simply setting a value), then you lose the
 uni-directional flow of state + events, which is the sole benefit of something
-like React. Otherwise we are back to two-directional data, or mutable state,
-aka the thing that made client-side programming difficult in the past.
+like React. Otherwise we are back to two-directional data binding, or mutable
+state, aka the thing that made client-side programming difficult in the past.
 
 
 ```js
@@ -92,8 +99,8 @@ let parentRenders = 0
 let childRenders = 0
 
 /**
- * Child knows nothings about its event namespace. It only knows its local
- * event names.
+ * Child knows nothings about its event namespace or parent components.
+ * It only knows its local event names.
  */
 function Child ({ emit, state }):FunctionComponent {
     childRenders++
@@ -141,7 +148,7 @@ function Example ():FunctionComponent {
 
 ### Create namespaced event emitters
 Create a new child emit function, with namespaced event names. Pass in an
-array of names -- ['ok', 'example'] -- and a new prefix string -- 'child-two'.
+array of names -- `['ok', 'example']` -- and a new prefix string -- `'child-two'`.
 
 Events are emitted on the parent bus, but the events are namespaced --
 the given `prefix` is prepended to the event name.
