@@ -70,10 +70,10 @@ export class Bus {
 
         // attach other properties to the function
         const newEmitter = Object.assign(fn, {
-            _prefix: prefix || '',
+            prefix: prefix || '',
             events: evNames,
             createChild: function (events, prefix) {
-                return self.emitter(events, newEmitter._prefix + '.' + prefix)
+                return self.emitter(events, newEmitter.prefix + '.' + prefix)
             }
         })
 
