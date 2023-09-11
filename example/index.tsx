@@ -34,6 +34,7 @@ Child.events = ['hello', 'foo']
 function Example ():FunctionComponent {
     parentRenders++
 
+    // state here is decoupled from the view tree
     const state = useSignal({ hello: 'hello' })
 
     // handle subscriptions in `useMemo`, because we only want
@@ -41,15 +42,15 @@ function Example ():FunctionComponent {
     //
     // parent needs to know the event names that child components will emit
     const emitter = useMemo(() => {
-        const emit = bus.emitter(Child.events, 'childEmitter')
+        const child = bus.emitter(Child.events, 'childEmitter')
 
-        bus.on(emit.events.hello, ev => {
+        bus.on(child.events.hello, ev => {
             ev.preventDefault()
             const msg = ev.target.dataset.message
             state.value = { hello: msg }
         })
 
-        return emit
+        return child
     }, [])
 
     return (<div>
