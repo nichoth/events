@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "main": "dist/index.js",
   "scripts": {
+    "start": "",
     "lint": "standardx -v \"./**/*.ts\"",
     "build-tests": "esbuild test/*.ts --platform=node --format=esm --outdir=test --keep-names",
-    "test": "npm run build && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
+    "test": "tsc --project tsconfig.build.json && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
     "build-cjs": "esbuild src/*.ts --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-cjs && tsc --project tsconfig.build.json",
     "preversion": "npm run lint",
