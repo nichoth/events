@@ -6,9 +6,7 @@ interface StarListener {
     (evName:string, data:any): any
 }
 
-type EvObj = { _?:string[] } & { [k:string]:Events }
-
-export type Events = (EvObj|string[])
+export type Events = ({ _?:string[] } & { [k:string]:Events }|string[])
 
 export type NamespacedEvents = {
     [key:string]:string|NamespacedEvents
@@ -32,8 +30,6 @@ export class Bus {
      * @returns A new object with the leaves as namespaced strings
      */
     static createEvents (events:Events, prefix:string):NamespacedEvents {
-        const lastPrefix = prefix[prefix.length - 1]
-
         return (Array.isArray(events) ?
             // if lastPrefix is _,
             // then `events` is array
@@ -47,8 +43,7 @@ export class Bus {
                 if (evName === '_') {
                     return Object.assign(
                         acc,
-                        Bus.createEvents(events[evName] as string[], (prefix ?
-                            prefix : ''))
+                        Bus.createEvents(events[evName] as string[], (prefix || ''))
                     )
                 }
 
