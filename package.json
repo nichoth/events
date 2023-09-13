@@ -1,6 +1,6 @@
 {
   "name": "@nichoth/events",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Event emitter and helpers",
   "directories": {
     "test": "test"
