@@ -4,7 +4,7 @@ An event emitter and helpers
 __featuring__
 * 0 production dependencies
 * CJS and ESM versions
-* 534B minified and gzipped
+* 469 bytes minified and gzipped
 
 ## install
 ```bash
