@@ -8,12 +8,20 @@ interface StarListener {
 
 export type Events = ({ _?:string[] } & { [k:string]:Events }|string[])
 
+// type ValueOf<T> = T[keyof T];
+
 export type NamespacedEvents = {
     [key:string]:string|NamespacedEvents
 }
 
+// myEvents = Bus.createEvents({ ... })
+// bus = Bus()<myEvents>
+
+// export class Bus<T extends NamespacedEvents> {
 export class Bus {
-    _starListeners:StarListener[]
+    _starListeners:StarListener[];
+    // _listeners:Record<string, Listener[]>
+    // _listeners:{ [K in keyof T]:Listener[] } | {};
     _listeners:Record<string, Listener[]>
 
     /**
@@ -63,6 +71,7 @@ export class Bus {
      * @param listener Function to call with the event
      * @returns {()=>void} function `off` -- call this to remove the listener
      */
+    // on (evName:ValueOf<T>, listener:Listener|StarListener):() => void {
     on (evName:string, listener:Listener|StarListener):() => void {
         if (evName === '*') {
             this._starListeners.push(listener)
@@ -89,9 +98,18 @@ export class Bus {
     /**
      * Emit an event.
      * @param {string} evName The event name to emit
-     * @param {any} data The data to pass to event listeners
+     * @param {any?} data The data to pass to event listeners
      */
-    emit (evName:string, data:any) {
+    emit (evName:string, data?:any) {
+        const self = this
+
+        // curry
+        if (!data) {
+            return function (data) {
+                return self.emit(evName, data)
+            }
+        }
+
         const listeners = this._listeners[evName] || []
 
         if (listeners && listeners.length > 0) {
@@ -101,6 +119,8 @@ export class Bus {
         if (this._starListeners.length > 0) {
             this._emit(this._starListeners, evName, data, true)
         }
+
+        return this
     }
 
     _emit (arr:Listener[]|StarListener[], evName:string, data:any, isStar:boolean) {

@@ -64,6 +64,19 @@ const bus = new Bus()
 bus.emit(events.a['1'], 'test data')
 ```
 
+You can partially apply the the `.emit` function
+```js
+const emitFoo = bus.emit('foo')
+
+bus.on('foo', data => {
+    console.log(data)
+    // => { example: 'data' }
+})
+
+emitFoo({ example: 'data' })
+
+```
+
 ## develop
 Install dev deps with `--legacy-peer-deps`. 
 

@@ -76,3 +76,17 @@ test('subscribe to *', t => {
     })
     bus.emit('foo', 'bar')
 })
+
+test('Curry the emit function', t => {
+    t.plan(2)
+    const bus = new Bus()
+    const emitFoo = bus.emit('foo')
+    t.equal(typeof emitFoo, 'function', 'should return a new function')
+
+    bus.on('foo', data => {
+        t.equal(data.example, 'test data',
+            'should hear the event from curried function')
+    })
+
+    emitFoo({ example: 'test data' })
+})
