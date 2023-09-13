@@ -1,6 +1,11 @@
 # events ![tests](https://github.com/nichoth/events/actions/workflows/nodejs.yml/badge.svg)
 An event emitter and helpers
 
+__featuring__
+* 0 production dependencies
+* CJS and ESM versions
+* 534B minified and gzipped
+
 ## install
 ```bash
 npm i -S @nichoth/events
