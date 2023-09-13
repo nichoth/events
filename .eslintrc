@@ -1,6 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "ignorePatterns": ["lib.es5.d.ts"],
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "requireConfigFile": false,
     "babelOptions": {
