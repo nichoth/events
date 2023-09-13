@@ -43,10 +43,10 @@ test('create event names', t => {
 
             e: { '10': 'd.e.10', '11': 'd.e.11' }
         }
-    })
+    }, 'should create the right object shape')
 })
 
-test('subscribe to bus', t => {
+test('subscribe and emit events', t => {
     t.plan(2)
     const off = bus.on(events.a['1'], (data) => {
         t.equal(data, 'test data', 'first listener gets the event')
