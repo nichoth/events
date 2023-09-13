@@ -14,7 +14,7 @@ npm i -S @nichoth/events
 ## example
 
 ### create namespaced events
-Take an object of arrays of strings, and return a new object where the leaf nodes are strings containing the full object path as a string.
+Take an object of arrays of strings, and return a new object where the leaf nodes are strings containing the full object path.
 
 ```js
 import { Bus } from '@nichoth/events'
