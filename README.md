@@ -45,8 +45,27 @@ Bus.createEvents({
 //
 ```
 
+### subscribe
+```js
+import { Bus } from '@nichoth/events'
+const bus = new Bus()
+
+const off = bus.on(events.a['1'], (data) => {
+    t.equal(data, 'test data', 'first listener gets the event')
+    off()  // unsubscribe
+})
+```
+
+### emit events
+```js
+import { Bus } from '@nichoth/events'
+const bus = new Bus()
+
+bus.emit(events.a['1'], 'test data')
+```
+
 ## develop
-Install dev deps with `--legacy-peer-deps` because of a problem with dependencies.
+Install dev deps with `--legacy-peer-deps`. 
 
 ```bash
 npm i --legacy--peer-deps
