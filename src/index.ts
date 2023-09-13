@@ -6,49 +6,11 @@ interface StarListener {
     (evName:string, data:any): any
 }
 
-// type Events = Record<string, any[]|Events>
+type EvObj = { _?:string[] } & { [k:string]:Events }
 
-// type EventArr = {
-//     [_:'_']: string[]
-// }
+export type Events = (EvObj|string[])
 
-// type Events = Partial<EventArr & {
-//     [key:string]: Events
-// }> | string[]
-
-// interface Events extends EventArr {
-//     [key:string]:Events
-// }
-
-// interface Events {
-//     _:string[],
-//     [key:string]:Events|undefined
-// }
-
-// type Events = Partial<{
-//     _:string[],
-//     [key:string]:Events|undefined
-// } | { [key:string]:Events }>
-
-// type Events = {
-//     _:string[],
-//     [key:string]:Events|undefined
-// }
-
-// type Key = '_'
-// const key:Key = '_'
-
-type _ = '_'
-
-type Events = {
-    [k in _]: string
-}
-
-// type Events = Partial<EventArr & {
-//     [key:string]:Events
-// }>
-
-type NamespacedEvents = {
+export type NamespacedEvents = {
     [key:string]:string|NamespacedEvents
 }
 
@@ -70,46 +32,34 @@ export class Bus {
      * @returns A new object with the leaves as namespaced strings
      */
     static createEvents (events:Events, prefix:string):NamespacedEvents {
-        return Object.keys(events).reduce((acc, key) => {
-            if (key === '_') {
-                // namespace event names
-                // return an object of strings: [a,b,c] => { a:'a', b:'b', c:'c'}
-                return (events[key] as string[]).reduce((_acc, val) => {
-                    _acc[val] = (prefix ? prefix + '.' + val : val)
-                    return _acc
-                }, {})
-            }
+        const lastPrefix = prefix[prefix.length - 1]
 
-            // can pass an array as a node
-            // { a: { b: ['foo', 'bar'] } }
-            if (Array.isArray(events[key])) {
-                return (events[key] as string[]).reduce((_acc, ev) => {
-                    acc[ev] = (prefix + '.' + ev)
-                    return acc
-                }, {})
-            }
+        return (Array.isArray(events) ?
+            // if lastPrefix is _,
+            // then `events` is array
+            (events.reduce((acc, ev) => {
+                acc[ev] = (prefix ? prefix + '.' + ev : ev)
+                return acc
+            }, {})) :
 
-            // key is not _, and not array
-            acc[key] = Bus.createEvents(events[key] as Events, key)
-            return acc
-        }, {})
+            // events is object
+            (Object.keys(events).reduce((acc, evName) => {
+                if (evName === '_') {
+                    return Object.assign(
+                        acc,
+                        Bus.createEvents(events[evName] as string[], (prefix ?
+                            prefix : ''))
+                    )
+                }
 
-        /**
-         * { a: {
-         *     _: ['a', 'b', 'c'],
-         *     b: {
-         *       c: {
-         *         _: ['d', 'e', 'f']
-         *       }
-         *     }
-         *   }
-         * }
-         */
+                acc[evName] = Bus.createEvents(events[evName], (prefix ?
+                    (prefix + '.' + evName) :
+                    evName
+                ))
 
-        // return evs.reduce((acc, ev) => {
-        //     acc[ev] = (prefix ? (prefix + '.' + ev) : ev)
-        //     return acc
-        // }, {})
+                return acc
+            }, {}))
+        )
     }
 
     /**
@@ -122,6 +72,7 @@ export class Bus {
         if (evName === '*') {
             this._starListeners.push(listener)
         } else {
+            if (!this._listeners[evName]) this._listeners[evName] = []
             this._listeners[evName].push(listener as Listener)
         }
 
@@ -132,7 +83,9 @@ export class Bus {
                 const i = self._starListeners.findIndex(fn => {
                     return fn === listener
                 })
-                self._starListeners.splice(i, 1)
+                const newArr = Array.from(self._starListeners)
+                newArr.splice(i, 1)
+                self._starListeners = newArr
             } else {
                 const listeners = self._listeners[evName]
                 const i = listeners.findIndex(fn => {
@@ -151,7 +104,7 @@ export class Bus {
      * @param {any} data The data to pass to event listeners
      */
     emit (evName:string, data:any) {
-        const listeners = this._listeners[evName]
+        const listeners = this._listeners[evName] || []
         const self = this
 
         if (listeners && listeners.length > 0) {
