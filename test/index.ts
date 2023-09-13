@@ -7,6 +7,9 @@ test('create a bus', t => {
     t.ok(bus, 'create an event bus')
     t.equal(typeof bus.on, 'function', 'should have .on')
     t.equal(typeof bus.emit, 'function', 'should have .emit')
+
+    t.doesNotThrow(() => Bus.createEvents({ test: ['test'] }), null,
+        'prefix parameter is optional')
     t.end()
 })
 

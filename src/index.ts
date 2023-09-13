@@ -29,7 +29,7 @@ export class Bus {
      * @param evs An object of events
      * @returns A new object with the leaves as namespaced strings
      */
-    static createEvents (events:Events, prefix:string):NamespacedEvents {
+    static createEvents (events:Events, prefix?:string):NamespacedEvents {
         return (Array.isArray(events) ?
             // if lastPrefix is _,
             // then `events` is array
