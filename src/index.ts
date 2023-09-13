@@ -75,20 +75,13 @@ export class Bus {
 
         return function off () {
             if (evName === '*') {
-                const i = self._starListeners.findIndex(fn => {
-                    return fn === listener
+                self._starListeners = self._starListeners.filter(fn => {
+                    return fn !== listener
                 })
-                const newArr = Array.from(self._starListeners)
-                newArr.splice(i, 1)
-                self._starListeners = newArr
             } else {
-                const listeners = self._listeners[evName]
-                const i = listeners.findIndex(fn => {
-                    return fn === listener
+                self._listeners[evName] = self._listeners[evName].filter(fn => {
+                    return fn !== listener
                 })
-                const newArr = Array.from(self._listeners[evName])
-                newArr.splice(i, 1)
-                self._listeners[evName] = newArr
             }
         }
     }
