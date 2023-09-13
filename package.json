@@ -24,7 +24,6 @@
     }
   },
   "scripts": {
-    "start": "",
     "lint": "standardx -v \"./**/*.ts\"",
     "build-tests": "esbuild test/*.ts --platform=node --format=esm --outdir=test --keep-names",
     "test": "tsc --project tsconfig.build.json && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
