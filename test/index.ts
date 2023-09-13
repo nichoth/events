@@ -66,3 +66,13 @@ test('subscribe and emit events', t => {
     // should only get 1 event each, because we call `off` after
     bus.emit(events.a['1'], 'test data')
 })
+
+test('subscribe to *', t => {
+    t.plan(2)
+    const bus = new Bus()
+    bus.on('*', (ev, data) => {
+        t.equal(ev, 'foo')
+        t.equal(data, 'bar')
+    })
+    bus.emit('foo', 'bar')
+})

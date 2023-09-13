@@ -100,24 +100,22 @@ export class Bus {
      */
     emit (evName:string, data:any) {
         const listeners = this._listeners[evName] || []
-        const self = this
 
         if (listeners && listeners.length > 0) {
-            self._emit(listeners, evName, data)
+            this._emit(listeners, evName, data, false)
         }
 
         if (this._starListeners.length > 0) {
-            self._emit(this._starListeners, evName, data)
+            this._emit(this._starListeners, evName, data, true)
         }
     }
 
-    _emit (arr:Listener[]|StarListener[], evName:string, data:any) {
+    _emit (arr:Listener[]|StarListener[], evName:string, data:any, isStar:boolean) {
         if (arr.length === 0) return
 
-        if (evName === '*') {
-            data = [evName].concat(data)
+        if (isStar) {
             this._starListeners.forEach(listener => {
-                listener.call(listener, evName, data)
+                (listener as StarListener).call(listener, evName, data)
             })
             return
         }
