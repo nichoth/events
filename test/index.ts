@@ -122,3 +122,15 @@ test('valid event names', t => {
     t.throws(() => bus.on('baloney', () => null), null,
         'should throw subscribing to a bad even name')
 })
+
+test('star listener', t => {
+    t.plan(2)
+    const bus = new Bus(['foo', 'bar'])
+
+    bus.on('*', function (name:string, data) {
+        t.equal(name, 'foo', 'should get the event name')
+        t.equal(data, 'hello', 'should get the event data')
+    })
+
+    bus.emit('foo', 'hello')
+})
