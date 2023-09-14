@@ -23,6 +23,9 @@ const bus = new Bus()
 const bus2 = new Bus(['valid', 'events'])
 ```
 
+### Bus.flatten
+Get an array of the leaf node values of an object of any shape, for example the return value of `Bus.createEvents`.
+
 It's recommended to use the `.flatten` static function to get the event name values after calling `.createEvents`. Or, if you pass in anything that is not an array, the constructor will call `.flatten` on it.
 ```js
 import { Bus } from '@nichoth/events'
@@ -36,7 +39,7 @@ const events = Bus.createEvents({
     }
 })
 
-const bus = new Bus(Bus.flattern(events))
+const bus = new Bus(Bus.flatten(events))
 // is the same as
 const bust2 = new Bus(events)
 ```
