@@ -20,16 +20,24 @@ export type NamespacedEvents = {
 // export class Bus<T extends NamespacedEvents> {
 export class Bus {
     _starListeners:StarListener[];
-    // _listeners:Record<string, Listener[]>
-    // _listeners:{ [K in keyof T]:Listener[] } | {};
     _listeners:Record<string, Listener[]>
+    _validEvents:string[]|null
 
     /**
      * @constructor
+     * @param {string[]} [validEvents] Optional -- pass in an array of event
+     * names that are valid. Will throw if you emit or listen for an event
+     * not in the list.
      */
-    constructor () {
+    constructor (validEvents?:string[]|NamespacedEvents) {
         this._starListeners = []
         this._listeners = {}
+        this._validEvents = null
+        if (validEvents) {
+            this._validEvents = (Array.isArray(validEvents) ?
+                validEvents :
+                Bus.flatten(validEvents))
+        }
     }
 
     /**
@@ -66,6 +74,22 @@ export class Bus {
     }
 
     /**
+     * Return an array of leaf nodes of an object
+     * @param events Namespaced events (the return value of `Bus.createEvents`)
+     * @param {[string]} [existing] Previous array to concat with
+     * @returns {string[]}
+     */
+    static flatten (events:NamespacedEvents|string, existing:string[] = []):string[] {
+        if (typeof events === 'string') {
+            return existing.concat([events])
+        }
+
+        return Object.keys(events).reduce((acc, key) => {
+            return Bus.flatten(events[key], acc)
+        }, existing)
+    }
+
+    /**
      * Listen for an event
      * @param {string} evName Name of the event, or '*' for all events
      * @param listener Function to call with the event
@@ -76,6 +100,10 @@ export class Bus {
         if (evName === '*') {
             this._starListeners.push(listener)
         } else {
+            if (this._validEvents && !this._validEvents.includes(evName)) {
+                throw new Error('Invalid event name subscribed to')
+            }
+
             if (!this._listeners[evName]) this._listeners[evName] = []
             this._listeners[evName].push(listener as Listener)
         }
@@ -100,12 +128,16 @@ export class Bus {
      * @param {string} evName The event name to emit
      * @param {any?} data The data to pass to event listeners
      */
-    emit (evName:string, data?:any) {
+    emit (evName:string, data?:any):any {
         const self = this
+
+        if (this._validEvents && !this._validEvents.includes(evName)) {
+            throw new Error('Invalid event name emitted')
+        }
 
         // curry
         if (!data) {
-            return function (data) {
+            return function (data:any) {
                 return self.emit(evName, data)
             }
         }

@@ -14,7 +14,7 @@ test('create a bus', t => {
 })
 
 let events
-test('create event names', t => {
+test('create namespaced event names', t => {
     t.plan(1)
 
     events = Bus.createEvents({
@@ -47,6 +47,22 @@ test('create event names', t => {
             e: { '10': 'd.e.10', '11': 'd.e.11' }
         }
     }, 'should create the right object shape')
+})
+
+test('flatten an object of events', t => {
+    t.plan(2)
+    const arr = Bus.flatten(events)
+    const expected = [
+        'a.1', 'a.2',
+        'a.3', 'b.c.4',
+        'b.c.5', 'b.c.6',
+        'd.7', 'd.8',
+        'd.9', 'd.e.10',
+        'd.e.11'
+    ]
+
+    t.ok(Array.isArray(arr), 'should return an array')
+    t.deepEqual(arr, expected, 'should create the right array')
 })
 
 test('subscribe and emit events', t => {
@@ -88,5 +104,23 @@ test('Curry the emit function', t => {
             'should hear the event from curried function')
     })
 
+    if (typeof emitFoo !== 'function') return  // for ts
     emitFoo({ example: 'test data' })
+})
+
+test('valid event names', t => {
+    t.plan(4)
+    const events = Bus.createEvents({
+        foo: ['bar', 'baz']
+    })
+    const bus = new Bus(events)
+    t.doesNotThrow(() => bus.emit('foo.bar', 'testing'), null,
+        'should not throw error emitting a valid event')
+    t.throws(() => bus.emit('bla', 'test data'), null,
+        'should throw emitting a bad event name')
+
+    t.doesNotThrow(() => bus.on('foo.bar', () => null), null,
+        'should not throw subscribing to a valid event name')
+    t.throws(() => bus.on('baloney', () => null), null,
+        'should throw subscribing to a bad even name')
 })
