@@ -13,6 +13,34 @@ npm i -S @nichoth/events
 
 ## example
 
+### create an event bus
+```js
+import { Bus } from '@nichoth/events'
+const bus = new Bus()
+
+// you can pass in a list of event names that are allowed.
+// If you subscribe or emit something not in the list, it will throw an error.
+const bus2 = new Bus(['valid', 'events'])
+```
+
+It's recommended to use the `.flatten` static function to get the event name values after calling `.createEvents`. Or, if you pass in anything that is not an array, the constructor will call `.flatten` on it.
+```js
+import { Bus } from '@nichoth/events'
+
+const events = Bus.createEvents({
+    a: {
+        _: [1, 2, 3]
+        b: {
+            c: [1,2,3]
+        }
+    }
+})
+
+const bus = new Bus(Bus.flattern(events))
+// is the same as
+const bust2 = new Bus(events)
+```
+
 ### create namespaced events
 Take an object of arrays of strings, and return a new object where the leaf nodes are strings containing the full object path.
 
