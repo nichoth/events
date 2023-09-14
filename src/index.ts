@@ -136,7 +136,7 @@ export class Bus {
         }
 
         // curry
-        if (!data) {
+        if (data === undefined) {
             return function (data:any) {
                 return self.emit(evName, data)
             }

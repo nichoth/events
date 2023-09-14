@@ -123,6 +123,15 @@ test('valid event names', t => {
         'should throw subscribing to a bad even name')
 })
 
+test('emit a null event', t => {
+    t.plan(1)
+    const bus = new Bus()
+    bus.on('foo', () => {
+        t.pass('event listener was called')
+    })
+    bus.emit('foo', null)
+})
+
 test('star listener', t => {
     t.plan(2)
     const bus = new Bus(['foo', 'bar'])
