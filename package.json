@@ -32,7 +32,8 @@
     "build:min": "mkdir -p dist && esbuild src/index.ts --keep-names --minify --outfile=dist/index.min.js",
     "preversion": "npm run lint",
     "postversion": "git push && git push --tags && npm publish",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "count": "npm run build && gzip -c dist/index.min.js | wc -c"
   },
   "devDependencies": {
     "@socketsupply/tapzero": "^0.7.1",
