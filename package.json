@@ -27,7 +27,7 @@
     "lint": "standardx -v \"./**/*.ts\"",
     "build-tests": "esbuild test/*.ts --platform=node --format=esm --outdir=test --keep-names",
     "test": "tsc --project tsconfig.build.json && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
-    "build-cjs": "esbuild src/*.ts --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
+    "build-cjs": "esbuild src/*.ts --tsconfig=./tsconfig.build.json --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-cjs && tsc --project tsconfig.build.json && npm run build:min",
     "build:min": "mkdir -p dist && esbuild src/index.ts --keep-names --minify --outfile=dist/index.min.js",
     "preversion": "npm run lint",
