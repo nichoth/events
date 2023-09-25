@@ -36,7 +36,6 @@
     "count": "npm run build && gzip -c dist/index.min.js | wc -c"
   },
   "devDependencies": {
-    "@socketsupply/tapzero": "^0.7.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.0.0",
     "esbuild": "^0.15.18",
