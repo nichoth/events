@@ -166,12 +166,15 @@ test('event types', t => {
     bus3.emit('aaaa', 'data')
 
     const bus = new Bus<['a', 'b', 'c']>()
-    // look for TS errors in vscode
-    t.doesNotThrow(() => {  // because we didn't pass in the events array
+
+    // should see TS errors in vscode
+    // doesn't throw at runtime because we didn't pass in the events array
+    t.doesNotThrow(() => {
         bus.emit('bad event', { data: 'data' })
         bus.on('aaaaa', data => console.log(data))
     })
 
+    // should not see TS error here
     bus.emit('a', 'test')
     t.end()
 })
