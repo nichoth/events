@@ -1,4 +1,10 @@
-# events ![tests](https://github.com/nichoth/events/actions/workflows/nodejs.yml/badge.svg)
+# events
+![tests](https://github.com/nichoth/events/actions/workflows/nodejs.yml/badge.svg)
+[![Socket Badge](https://socket.dev/api/badge/npm/package/@nichoth/events)](https://socket.dev/npm/package/@nichoth/events)
+[![module](https://img.shields.io/badge/module-ESM%2FCJS-blue)](README.md)
+[![types](https://img.shields.io/npm/types/@nichoth/events)](README.md)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
+
 An event emitter and helpers
 
 __featuring__
