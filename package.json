@@ -45,7 +45,7 @@
     "typescript": "^5.0.2"
   },
   "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
-  "license": "AGPL-3.0-or-later",
+  "license": "MIT",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",

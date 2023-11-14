@@ -1,6 +1,8 @@
 import test from 'tape'
-import { Bus } from '../dist/index.js'
+import { Bus } from '../src/index.js'
 let bus
+
+type ValuesOf<T extends any[]>= T[number];
 
 test('create a bus', t => {
     bus = new Bus()
@@ -142,4 +144,34 @@ test('star listener', t => {
     })
 
     bus.emit('foo', 'hello')
+})
+
+test('event types', t => {
+    const eventTree = Bus.createEvents({
+        a: ['b', 'c', 'd'],
+        b: {
+            _: ['e', 'f'],
+            c: ['1', '2', '3']
+        }
+    })
+
+    const flat = Bus.flatten(eventTree)
+    const bus2 = new Bus<Array<typeof flat[number]>>(flat)
+    t.throws(() => {
+        bus2.on('qqqqq', (data) => console.log(data))
+    })
+
+    const arr = ['a', 'b', 'c']
+    const bus3 = new Bus<typeof arr>()
+    bus3.emit('aaaa', 'data')
+
+    const bus = new Bus<['a', 'b', 'c']>()
+    // look for TS errors in vscode
+    t.doesNotThrow(() => {  // because we didn't pass in the events array
+        bus.emit('bad event', { data: 'data' })
+        bus.on('aaaaa', data => console.log(data))
+    })
+
+    bus.emit('a', 'test')
+    t.end()
 })
