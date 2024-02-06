@@ -1,5 +1,5 @@
-import test from 'tape'
-import { Bus } from '../dist/index.js'
+import { test } from '@nichoth/tapzero'
+import { Bus } from '../src/index.js'
 let bus
 
 test('create a bus', t => {
@@ -7,8 +7,6 @@ test('create a bus', t => {
     t.ok(bus, 'create an event bus')
     t.equal(typeof bus.on, 'function', 'should have .on')
     t.equal(typeof bus.emit, 'function', 'should have .emit')
-
-    t.end()
 })
 
 let events
@@ -112,22 +110,25 @@ test('valid event names', t => {
         foo: ['bar', 'baz']
     })
     const bus = new Bus(events)
-    t.doesNotThrow(() => bus.emit('foo.bar', 'testing'), null,
-        'should not throw error emitting a valid event')
+    bus.emit('foo.bar', 'testing')
+    t.ok('should not throw with a valid event name')
+
     t.throws(() => bus.emit('bla', 'test data'), null,
         'should throw emitting a bad event name')
 
-    t.doesNotThrow(() => bus.on('foo.bar', () => null), null,
-        'should not throw subscribing to a valid event name')
-    t.throws(() => bus.on('baloney', () => null), null,
+    bus.on('foo.bar', () => null)
+    t.ok('should not throw subscribing to a valid event name')
+
+    t.throws(() => bus.on('baloney', () => null),
         'should throw subscribing to a bad even name')
 })
 
 test('emit a null event', t => {
-    t.plan(1)
+    t.plan(2)
     const bus = new Bus()
-    bus.on('foo', () => {
-        t.pass('event listener was called')
+    bus.on('foo', (ev) => {
+        t.ok(!ev, 'event listener was called')
+        t.equal(ev, null, 'should get null as the event')
     })
     bus.emit('foo', null)
 })
@@ -142,4 +143,40 @@ test('star listener', t => {
     })
 
     bus.emit('foo', 'hello')
+})
+
+// type ValuesOf<T extends any[]>= T[number];
+
+test('event types', t => {
+    const eventTree = Bus.createEvents({
+        a: ['b', 'c', 'd'],
+        b: {
+            _: ['e', 'f'],
+            c: ['1', '2', '3']
+        }
+    })
+
+    const flat = Bus.flatten(eventTree)
+    const bus2 = new Bus<typeof flat>(flat)
+    // const bus2 = new Bus<Array<typeof flat[number]>>(flat)
+    // const tester = new Bus<typeof flat>(flat)
+    // tester.on('qcb', () => {})
+
+    t.throws(() => {
+        bus2.on('qqqqq', (data) => console.log(data))
+    }, 'should throw because the event name is invalid')
+
+    const arr = ['a', 'b', 'c']
+    const bus3 = new Bus<typeof arr>()
+    bus3.emit('aaaa', 'data')
+
+    const bus = new Bus<['a', 'b', 'c']>()
+
+    // should see TS errors in vscode
+    // but should not throw, because we did not pass events as an argument
+    bus.emit('bad event', { data: 'data' })
+    bus.on('aaaaa', data => console.log(data))
+
+    // should not see TS error here
+    bus.emit('a', 'test')
 })

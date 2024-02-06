@@ -1,42 +1,48 @@
 interface Listener {
-    (any): any
+    (any):any
 }
 
 interface StarListener {
     (evName:string, data:any): any
 }
 
-export type Events = ({ _?:string[] } & { [k:string]:Events }|string[])
+type ValuesOf<T extends any[]>= T[number];
+// type AllowedEvent<T extends Array<string>> = ValuesOf<T>
 
-// type ValueOf<T> = T[keyof T];
+// interface Emitter<T extends string[]> {
+//     on<K extends AllowedEvent<T>>
+//       (eventName: K, fn: Listener): any;
+//     emit<K extends AllowedEvent<T>>
+//       (eventName:K, params:any): void;
+// }
+
+export type Events = ({ _?:string[] } & { [k:string]:Events }|string[])
 
 export type NamespacedEvents = {
     [key:string]:string|NamespacedEvents
 }
 
-// myEvents = Bus.createEvents({ ... })
-// bus = Bus()<myEvents>
+// type Flatten<T> = T extends string[] ? T[number] : T;
 
-// export class Bus<T extends NamespacedEvents> {
-export class Bus {
+// export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
+export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
     _starListeners:StarListener[];
-    _listeners:Record<string, Listener[]>
-    _validEvents:string[]|null
+    _listeners:Record<string, Listener[]>;
+    _validEvents:T|null;
 
     /**
      * @constructor
-     * @param {string[]} [validEvents] Optional -- pass in an array of event
-     * names that are valid. Will throw if you emit or listen for an event
-     * not in the list.
+     * @param {EvNames} [validEvents] An array of valid event names.
+     * Will throw if you emit or listen for an event not in the list.
      */
-    constructor (validEvents?:string[]|NamespacedEvents) {
+    constructor (validEvents?:T|NamespacedEvents) {
         this._starListeners = []
         this._listeners = {}
         this._validEvents = null
         if (validEvents) {
             this._validEvents = (Array.isArray(validEvents) ?
                 validEvents :
-                Bus.flatten(validEvents))
+                Bus.flatten<T>(validEvents))
         }
     }
 
@@ -74,29 +80,34 @@ export class Bus {
     }
 
     /**
-     * Return an array of leaf nodes of an object
+     * Return an array of leaf nodes of an object. Use this to get an array
+     * of event names from a given nested object of event names.
+     *
      * @param events Namespaced events (the return value of `Bus.createEvents`)
-     * @param {[string]} [existing] Previous array to concat with
+     * @param {string[]} [existing] Previous array to concat with
      * @returns {string[]}
      */
-    static flatten (events:NamespacedEvents|string, existing:string[] = []):string[] {
+    static flatten<T extends string[]> (
+        events:NamespacedEvents|string,
+        existing:string[] = []
+    ):T {
         if (typeof events === 'string') {
-            return existing.concat([events])
+            return ((existing).concat([events as T[number]])) as T
         }
 
         return Object.keys(events).reduce((acc, key) => {
             return Bus.flatten(events[key], acc)
-        }, existing)
+        }, existing as T)
     }
 
     /**
      * Listen for an event
-     * @param {string} evName Name of the event, or '*' for all events
+     * @param {T} evName Name of the event, or '*' for all events
      * @param listener Function to call with the event
      * @returns {()=>void} function `off` -- call this to remove the listener
      */
-    // on (evName:ValueOf<T>, listener:Listener|StarListener):() => void {
-    on (evName:string, listener:Listener|StarListener):() => void {
+    // on (evName:string, listener:Listener|StarListener):() => void {
+    on (evName:ValuesOf<T>|'*', listener:Listener|StarListener):() => void {
         if (evName === '*') {
             this._starListeners.push(listener)
         } else {
@@ -124,11 +135,12 @@ export class Bus {
     }
 
     /**
-     * Emit an event.
-     * @param {string} evName The event name to emit
+     * Emit an event, or return a function that is curried with an event name.
+     *
+     * @param {T[number]} evName The event name to emit
      * @param {any?} data The data to pass to event listeners
      */
-    emit (evName:string, data?:any):any {
+    emit (evName:T[number], data?:any):any {
         const self = this
 
         if (this._validEvents && !this._validEvents.includes(evName)) {
@@ -155,7 +167,12 @@ export class Bus {
         return this
     }
 
-    _emit (arr:Listener[]|StarListener[], evName:string, data:any, isStar:boolean) {
+    _emit (
+        arr:(Listener|StarListener)[],
+        evName:string,
+        data:any,
+        isStar:boolean
+    ):void {
         if (arr.length === 0) return
 
         if (isStar) {

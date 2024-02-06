@@ -1,6 +1,6 @@
 {
   "name": "@nichoth/events",
-  "version": "3.1.9",
+  "version": "3.1.10",
   "description": "Event emitter and helpers",
   "directories": {
     "test": "test"
@@ -25,8 +25,9 @@
   },
   "scripts": {
     "lint": "standardx -v \"./**/*.ts\"",
-    "build-tests": "esbuild test/*.ts --platform=node --format=esm --outdir=test --keep-names",
-    "test": "tsc --project tsconfig.build.json && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
+    "build-tests": "esbuild test/*.ts --bundle --platform=node --format=esm --outdir=test --keep-names",
+    "//test": "tsc --project tsconfig.build.json && npm run build-tests && NODE_ENV=test node ./test/index.js | tap-arc",
+    "test": "esbuild ./test/index.ts --bundle --platform=node --format=esm | node --input-type=module | tap-arc",
     "build-cjs": "esbuild src/*.ts --tsconfig=./tsconfig.build.json --format=cjs --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-cjs && tsc --project tsconfig.build.json && npm run build:min",
     "build:min": "mkdir -p dist && esbuild src/index.ts --keep-names --minify --outfile=dist/index.min.js",
@@ -36,16 +37,16 @@
     "count": "npm run build && gzip -c dist/index.min.js | wc -c"
   },
   "devDependencies": {
+    "@nichoth/tapzero": "^0.8.4",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.0.0",
     "esbuild": "^0.15.18",
     "standardx": "^7.0.0",
     "tap-arc": "^0.3.5",
-    "tape": "^5.6.6",
     "typescript": "^5.0.2"
   },
   "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
-  "license": "AGPL-3.0-or-later",
+  "license": "MIT",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
