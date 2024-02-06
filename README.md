@@ -5,7 +5,7 @@
 [![types](https://img.shields.io/npm/types/@nichoth/events)](README.md)
 [![license](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
 
-An event emitter and helpers
+An extra minimal event emitter
 
 __featuring__
 * 0 production dependencies
@@ -18,6 +18,28 @@ npm i -S @nichoth/events
 ```
 
 ## example
+You can pass in an array of valid event names. If you subscribe to or emit an
+event not in the list, this will throw a runtime error. Also, you can create
+a typed event bus because `Bus` takes a type argument.
+
+### create an event bus, with types
+```ts
+import { Bus } from '@nichoth/events'
+
+const eventTree = Bus.createEvents({
+    a: ['b', 'c', 'd'],
+    b: {
+        _: ['e', 'f'],
+        c: ['1', '2', '3']
+    }
+})
+const events = Bus.flatten(eventTree)
+
+const bus = new Bus<Array<typeof events[number]>>(events)
+
+bus.on(eventTree.a)
+```
+
 
 ### create an event bus
 ```js

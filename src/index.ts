@@ -81,7 +81,8 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
 
     /**
      * Return an array of leaf nodes of an object. Use this to get an array
-     * of event names from a given nexted object of event names.
+     * of event names from a given nested object of event names.
+     *
      * @param events Namespaced events (the return value of `Bus.createEvents`)
      * @param {string[]} [existing] Previous array to concat with
      * @returns {string[]}

@@ -145,6 +145,8 @@ test('star listener', t => {
     bus.emit('foo', 'hello')
 })
 
+// type ValuesOf<T extends any[]>= T[number];
+
 test('event types', t => {
     const eventTree = Bus.createEvents({
         a: ['b', 'c', 'd'],
@@ -155,10 +157,14 @@ test('event types', t => {
     })
 
     const flat = Bus.flatten(eventTree)
-    const bus2 = new Bus<Array<typeof flat[number]>>(flat)
+    const bus2 = new Bus<typeof flat>(flat)
+    // const bus2 = new Bus<Array<typeof flat[number]>>(flat)
+    // const tester = new Bus<typeof flat>(flat)
+    // tester.on('qcb', () => {})
+
     t.throws(() => {
         bus2.on('qqqqq', (data) => console.log(data))
-    })
+    }, 'should throw because the event name is invalid')
 
     const arr = ['a', 'b', 'c']
     const bus3 = new Bus<typeof arr>()
