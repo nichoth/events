@@ -25,7 +25,7 @@ export type NamespacedEvents = {
 // type Flatten<T> = T extends string[] ? T[number] : T;
 
 // export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
-export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
+export class Bus<T extends ReadonlyArray<string>> /* implements Emitter<T> */ {
     _starListeners:StarListener[];
     _listeners:Record<string, Listener[]>;
     _validEvents:T|null;
@@ -87,17 +87,24 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
      * @param {string[]} [existing] Previous array to concat with
      * @returns {string[]}
      */
-    static flatten<T extends string[]> (
+    // static flatten<T extends ReadonlyArray<string>> (
+    static flatten (
         events:NamespacedEvents|string,
-        existing:string[] = []
-    ):T {
+        // existing:string[] = []
+        existing:ReadonlyArray<string> = []
+    ):ReadonlyArray<string> {
         if (typeof events === 'string') {
-            return ((existing).concat([events as T[number]])) as T
+            return [...existing].concat([events])
+            // return ((existing).concat([events as T[number]])) as T
         }
 
-        return Object.keys(events).reduce((acc, key) => {
+        const res = Object.keys(events).reduce((acc, key) => {
             return Bus.flatten(events[key], acc)
-        }, existing as T)
+        }, existing)
+
+        return [...res] as const
+        // }, existing as T) satisfies ReadonlyArray<string>
+        // }, existing as T) satisfies string[]
     }
 
     /**

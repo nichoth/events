@@ -157,17 +157,21 @@ test('event types', t => {
     })
 
     const flat = Bus.flatten(eventTree)
-    const bus2 = new Bus<typeof flat>(flat)
-    // const bus2 = new Bus<Array<typeof flat[number]>>(flat)
-    // const tester = new Bus<typeof flat>(flat)
-    // tester.on('qcb', () => {})
+    // const bus2 = new Bus<typeof flat>(flat)
+    const bus2 = new Bus<(typeof flat)>(flat)
+    const tester = new Bus<typeof flat>(flat)
+
+    // should see typescript error here
+    tester.on('aaa', () => {})
 
     t.throws(() => {
         bus2.on('qqqqq', (data) => console.log(data))
     }, 'should throw because the event name is invalid')
 
-    const arr = ['a', 'b', 'c']
-    const bus3 = new Bus<typeof arr>()
+    const arr = ['a', 'b', 'c'] as const
+    const bus3 = new Bus<typeof arr>(flat)
+
+    // should see TS error here
     bus3.emit('aaaa', 'data')
 
     const bus = new Bus<['a', 'b', 'c']>()
