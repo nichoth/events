@@ -156,8 +156,14 @@ test('event types', t => {
         }
     })
 
-    const flat = Bus.flatten(eventTree)
-    // const bus2 = new Bus<typeof flat>(flat)
+    // how to use `flat` as a type param?
+
+    /**
+     * throws
+     * A 'const' assertions can only be applied to references to enum members,
+     * or string, number, boolean, array, or object literals.
+     */
+    const flat = Bus.flatten(eventTree) // as const
     const bus2 = new Bus<(typeof flat)>(flat)
     const tester = new Bus<typeof flat>(flat)
 
@@ -169,7 +175,7 @@ test('event types', t => {
     }, 'should throw because the event name is invalid')
 
     const arr = ['a', 'b', 'c'] as const
-    const bus3 = new Bus<typeof arr>(flat)
+    const bus3 = new Bus<typeof arr>()
 
     // should see TS error here
     bus3.emit('aaaa', 'data')

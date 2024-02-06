@@ -6,7 +6,7 @@ interface StarListener {
     (evName:string, data:any): any
 }
 
-type ValuesOf<T extends any[]>= T[number];
+// type ValuesOf<T extends any[]>= T[number];
 // type AllowedEvent<T extends Array<string>> = ValuesOf<T>
 
 // interface Emitter<T extends string[]> {
@@ -22,9 +22,15 @@ export type NamespacedEvents = {
     [key:string]:string|NamespacedEvents
 }
 
-// type Flatten<T> = T extends string[] ? T[number] : T;
 
-// export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
+/**
+ * Take an array of valid event names, as a type param or regular parameter.
+ *
+ * @example
+ * ```js
+ * const events = Bus.flatten({ a: { b: [ 'c' ] } })
+ * ```
+ */
 export class Bus<T extends ReadonlyArray<string>> /* implements Emitter<T> */ {
     _starListeners:StarListener[];
     _listeners:Record<string, Listener[]>;
@@ -35,14 +41,15 @@ export class Bus<T extends ReadonlyArray<string>> /* implements Emitter<T> */ {
      * @param {EvNames} [validEvents] An array of valid event names.
      * Will throw if you emit or listen for an event not in the list.
      */
-    constructor (validEvents?:T|NamespacedEvents) {
+    constructor (validEvents?:T) {
         this._starListeners = []
         this._listeners = {}
         this._validEvents = null
         if (validEvents) {
-            this._validEvents = (Array.isArray(validEvents) ?
-                validEvents :
-                Bus.flatten<T>(validEvents))
+            this._validEvents = validEvents
+            // this._validEvents = (Array.isArray(validEvents) ?
+            //     validEvents :
+            //     Bus.flatten(validEvents))
         }
     }
 
@@ -114,7 +121,7 @@ export class Bus<T extends ReadonlyArray<string>> /* implements Emitter<T> */ {
      * @returns {()=>void} function `off` -- call this to remove the listener
      */
     // on (evName:string, listener:Listener|StarListener):() => void {
-    on (evName:ValuesOf<T>|'*', listener:Listener|StarListener):() => void {
+    on (evName:T[number]|'*', listener:Listener|StarListener):() => void {
         if (evName === '*') {
             this._starListeners.push(listener)
         } else {
