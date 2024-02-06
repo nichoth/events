@@ -29,10 +29,6 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
     _starListeners:StarListener[];
     _listeners:Record<string, Listener[]>;
     _validEvents:T|null;
-    // _validEvents:ValuesOf<T>|null;
-    // _validEvents:AllowedEvent<T>|null;
-    // _validEvents:Flatten<T>|null;
-    // _validEvents:T[number]|null;
 
     /**
      * @constructor
@@ -100,7 +96,7 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
 
         return Object.keys(events).reduce((acc, key) => {
             return Bus.flatten(events[key], acc)
-        }, existing as T) as const
+        }, existing as T)
     }
 
     /**
@@ -138,7 +134,8 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
     }
 
     /**
-     * Emit an event.
+     * Emit an event, or return a function that is curried with an event name.
+     *
      * @param {T[number]} evName The event name to emit
      * @param {any?} data The data to pass to event listeners
      */
@@ -169,7 +166,12 @@ export class Bus<T extends Array<string>> /* implements Emitter<T> */ {
         return this
     }
 
-    _emit (arr:Listener[]|StarListener[], evName:string, data:any, isStar:boolean) {
+    _emit (
+        arr:(Listener|StarListener)[],
+        evName:string,
+        data:any,
+        isStar:boolean
+    ):void {
         if (arr.length === 0) return
 
         if (isStar) {
